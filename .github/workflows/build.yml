@@ -114,7 +114,7 @@ jobs:
         run: |
           dotnet restore sharp/*.csproj --verbosity Detailed
       - name: "Build: dotnet: build sharp"
-        if: ${{ success() && matri.netbuilder == 'core' }}
+        if: ${{ success() && matrix.netbuilder == 'core' }}
         run: |
           dotnet build sharp/*.csproj --configuration $(netBuildConfiguration) "/p:Configuration=$(netBuildConfiguration)"
       # }}}
