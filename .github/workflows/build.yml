@@ -117,5 +117,5 @@ jobs:
       - name: "Build: dotnet: build sharp"
         if: ${{ success() && matrix.netbuilder == 'core' }}
         run: |
-          dotnet build sharp/Olympus.Sharp.csproj --configuration $(netBuildConfiguration) "/p:Configuration=$(netBuildConfiguration)"
+          dotnet build $(GITHUB_WORKSPACE)/sharp/*.csproj --configuration $(netBuildConfiguration) "/p:Configuration=$(netBuildConfiguration)"
       # }}}
