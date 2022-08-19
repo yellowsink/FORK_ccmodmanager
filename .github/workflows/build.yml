@@ -4,6 +4,8 @@ on: push
 
 env:
   FORCE_COLOR: true
+  netBuildPlatform: "Any CPU"
+  netBuildConfiguration: "Release"
 
 jobs:
   build:
@@ -63,5 +65,24 @@ jobs:
           submodules: "recursive"
           fetch-depth: 3
 
-      - run: |
-          echo ${{ matrix.jobArchName }}
+      # Prepare dependencies {{{
+      # Use brew on macOS.
+      - name: "Setup: macOS: brew: install lua lua@5.1 luarocks"
+        if: ${{ success() && matrix.agentArch == 'macOS' }}
+        run: |
+          export HOMEBREW_NO_INSTALL_CLEANUP=1
+          brew install lua lua@5.1 luarocks
+
+      # Use apt on Ubuntu.
+      - name: "Setup: Linux: apt: install luarocks and deps"
+        if: ${{ success() && matrix.agentArch == 'linux' }}
+        run: |
+          sudo apt -y update && sudo apt -y install luarocks libgtk-3-dev
+
+      # Cross platform setup.
+      - name: "Setup: luarocks: config"
+        if: ${{ success() && matrix.lualibs == 'luarocks' }}
+        run: |
+          git config --global url."https://github.com/".insteadOf git://github.com/
+          luarocks config lua_version 5.1
+          luarocks
