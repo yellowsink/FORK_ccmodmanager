@@ -70,6 +70,7 @@ jobs:
           dotnet-version: "6.0.x"
           include-prerelease: true
       - name: Add msbuild to PATH
+        if: ${{ success() && matrix.agentArch == 'windows' }}
         uses: microsoft/setup-msbuild@v1.1
 
       # Prepare dependencies {{{
