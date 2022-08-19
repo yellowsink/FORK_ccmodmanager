@@ -101,3 +101,10 @@ jobs:
         run: |
           luarocks ${{ matrix.luarocksPreArgs }} install --tree=luarocks lsqlite3complete ${{ matrix.luarocksArgs }}
       # }}}
+      # Build sharp. {{{
+      # Use dotnet to restore NuGet packages even when building with mono.
+      - name: "Build: dotnet: restore sharp"
+        run: |
+          dotnet restore sharp/*.csproj --verbosity Detailed
+          msbuild
+      # }}}
