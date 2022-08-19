@@ -11,9 +11,19 @@ jobs:
     strategy:
       matrix:
         imageName: [windows-latest, macos-10.15, ubuntu-latest]
+        include:
+          - imageName: windows-latest
+            jobArchName: "Windows"
+          - imageName: macos-10.15
+            jobArchName: "macOS"
+          - imageName: ubuntu-latest
+            jobArchName: "linux"
 
     steps:
       - uses: actions/checkout@v3
         with:
           submodules: "recursive"
           fetch-depth: 3
+
+      - run: |
+          echo ${{ matrix.jobArchName }}
