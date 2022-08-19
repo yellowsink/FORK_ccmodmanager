@@ -11,57 +11,10 @@ jobs:
     strategy:
       matrix:
         imageName: [Windows, macOS, linux]
-        include:
-          - imageName: 'windows-latest'
-            jobArchName: 'Windows'
-            agentArch: 'windows'
-            artifactPrefix: 'windows.'
-            artifactSuffix: ''
-            netbuilder: 'core'
-            lualibs: 'prebuilt'
-            loveURL: 'https://github.com/love2d/love/releases/download/11.3/love-11.3-win32.zip'
-            loveZIP: 'love.zip'
-            loveTAR: ''
-            loveBinaryDirectory: ''
-            loveResourcesDirectory: ''
-            loveBinary: 'love.exe'
-            jobArchName: 'macOS'
-            # TODO: Update to macOS-latest once all luarocks steps work on it.
-          - imageName: 'macos-10.15'
-            jobArchName: 'macOS'
-            agentArch: 'macOS'
-            artifactPrefix: 'macos.'
-            artifactSuffix: ''
-            netbuilder: 'mono'
-            monokickURL: 'https://github.com/flibitijibibo/MonoKickstart.git'
-            lualibs: 'luarocks'
-            luarocksPreArgs: '--lua-dir=/usr/local/opt/lua@5.1'
-            luarocksArgs: 'LUA_LIBDIR="/usr/local/opt/lua@5.1/lib"'
-            loveURL: 'https://github.com/love2d/love/releases/download/11.3/love-11.3-macos.zip'
-            loveZIP: 'love.zip'
-            loveTAR: ''
-            loveBinaryDirectory: 'love.app/Contents/MacOS/'
-            loveResourcesDirectory: 'love.app/Contents/Resources/'
-            launcher: ''
-          - imageName: 'ubuntu-latest'
-            jobArchName: 'linux'
-            agentArch: 'linux'
-            artifactPrefix: 'linux.'
-            artifactSuffix: ''
-            netbuilder: 'mono'
-            monokickURL: 'https://github.com/flibitijibibo/MonoKickstart.git'
-            lualibs: 'luarocks'
-            luarocksArgs: 'LUA_LIBDIR="/usr/local/opt/lua/lib"'
-            loveURL: 'https://github.com/love2d/love/releases/download/11.3/love-11.3-linux-x86_64.tar.gz'
-            loveZIP: ''
-            loveTAR: 'love.tar.gz'
-            loveBinaryDirectory: ''
-            loveResourcesDirectory: ''
-            launcher: ''
 
     steps:
       - uses: actions/checkout@v3
-        submodules: 'recursive'
+        submodules: "recursive"
         fetch-depth: 3
 
-      - name: 
+      - name:
