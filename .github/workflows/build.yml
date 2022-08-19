@@ -10,6 +10,7 @@ jobs:
     runs-on: ${{ matrix.imageName }}
     strategy:
       matrix:
+        jobArchName: [Windows, macOS, linux]
         include:
           - jobArchName: 'Windows'
             imageName: 'windows-latest'
@@ -26,7 +27,8 @@ jobs:
             loveBinary: 'love.exe'
             jobArchName: 'macOS'
             # TODO: Update to macOS-latest once all luarocks steps work on it.
-          - imageName: 'macos-10.15'
+          - jobArchName: 'macOS'
+            imageName: 'macos-10.15'
             agentArch: 'macOS'
             artifactPrefix: 'macos.'
             artifactSuffix: ''
