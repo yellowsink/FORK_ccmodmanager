@@ -14,12 +14,27 @@ jobs:
         include:
           - imageName: windows-latest
             jobArchName: "Windows"
+            agentArch: "windows"
+            artifactPrefix: "windows."
             artifactSuffix: ""
+            netbuilder: 'core'
+            lualibs: 'prebuilt'
+            loveURL: 'https://github.com/love2d/love/releases/download/11.3/love-11.3-win32.zip'
+            loveZIP: 'love.zip'
+            loveTAR: ''
+            loveBinaryDirectory: ''
+            loveResourcesDirectory: ''
+            loveBinary: 'love.exe'
+            jobArchName: 'macOS'
           - imageName: macos-10.15
             jobArchName: "macOS"
+            agentArch: "macOS"
+            artifactPrefix: "macos."
             artifactSuffix: ""
           - imageName: ubuntu-latest
             jobArchName: "linux"
+            agentArch: "linux"
+            artifactPrefix: "linux."
             artifactSuffix: ""
 
     steps:
