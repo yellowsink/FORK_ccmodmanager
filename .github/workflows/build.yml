@@ -14,10 +14,13 @@ jobs:
         include:
           - imageName: windows-latest
             jobArchName: "Windows"
+            artifactSuffix: ""
           - imageName: macos-10.15
             jobArchName: "macOS"
+            artifactSuffix: ""
           - imageName: ubuntu-latest
             jobArchName: "linux"
+            artifactSuffix: ""
 
     steps:
       - uses: actions/checkout@v3
