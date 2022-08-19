@@ -86,3 +86,18 @@ jobs:
           git config --global url."https://github.com/".insteadOf git://github.com/
           luarocks config lua_version 5.1
           luarocks
+      # }}}
+      # Build LuaRocks dependencies. {{{
+      - name: "Build: luarocks: install subprocess"
+        if: ${{ success() && matrix.lualibs == 'luarocks' }}
+        run: |
+          luarocks ${{ matrix.luarocksPreArgs }} install --tree=luarocks https://raw.githubusercontent.com/0x0ade/lua-subprocess/master/subprocess-scm-1.rockspec ${{ matrix.luarocksArgs }}
+      - name: "Build: luarocks: install nfd"
+        if: ${{ success() && matrix.lualibs == 'luarocks' }}
+        run: |
+          luarocks ${{ matrix.luarocksPreArgs }} install --tree=luarocks https://raw.githubusercontent.com/Vexatos/nativefiledialog/master/lua/nfd-scm-1.rockspec ${{ matrix.luarocksArgs }}
+      - name: "Build: luarocks: install lsqlite3complete"
+        if: ${{ success() && matrix.lualibs == 'luarocks' }}
+        run: |
+          luarocks ${{ matrix.luarocksPreArgs }} install --tree=luarocks lsqlite3complete ${{ matrix.luarocksArgs }}
+      # }}}
