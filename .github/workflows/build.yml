@@ -17,15 +17,14 @@ jobs:
             agentArch: "windows"
             artifactPrefix: "windows."
             artifactSuffix: ""
-            netbuilder: 'core'
-            lualibs: 'prebuilt'
-            loveURL: 'https://github.com/love2d/love/releases/download/11.3/love-11.3-win32.zip'
-            loveZIP: 'love.zip'
-            loveTAR: ''
-            loveBinaryDirectory: ''
-            loveResourcesDirectory: ''
-            loveBinary: 'love.exe'
-            jobArchName: 'macOS'
+            netbuilder: "core"
+            lualibs: "prebuilt"
+            loveURL: "https://github.com/love2d/love/releases/download/11.3/love-11.3-win32.zip"
+            loveZIP: "love.zip"
+            loveTAR: ""
+            loveBinaryDirectory: ""
+            loveResourcesDirectory: ""
+            loveBinary: "love.exe"
           - imageName: macos-10.15
             jobArchName: "macOS"
             agentArch: "macOS"
