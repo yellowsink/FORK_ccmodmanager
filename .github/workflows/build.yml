@@ -318,9 +318,9 @@ jobs:
           rm -v love/${{ matrix.loveBinaryDirectory }}/love.svg
           rm -v love/${{ matrix.loveBinaryDirectory }}/love.desktop.in
           rm -v love/${{ matrix.loveBinaryDirectory }}/license.txt
-          pushd love
           mkdir -p ../a/main
-          zip --symlinks -v -r ../a/main/dist.zip *
+          pushd love
+          zip --symlinks -v -r ../../a/main/dist.zip *
           popd
 
       # }}}
