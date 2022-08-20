@@ -64,16 +64,16 @@ jobs:
         with:
           submodules: 'recursive'
           fetch-depth: 3
-      # - name: Setup dotnet
-      #   uses: actions/setup-dotnet@v2
-      #   with:
-      #     dotnet-version: '6.0.x'
-      #     include-prerelease: true
-      # - name: Add msbuild to PATH
-      #   if: ${{ success() && matrix.agentArch == 'windows' }}
-      #   uses: microsoft/setup-msbuild@v1.1
-      #
-      # # Prepare dependencies {{{
+      - name: Setup dotnet
+        uses: actions/setup-dotnet@v2
+        with:
+          dotnet-version: '6.0.x'
+          include-prerelease: true
+      - name: Add msbuild to PATH
+        if: ${{ success() && matrix.agentArch == 'windows' }}
+        uses: microsoft/setup-msbuild@v1.1
+
+      # Prepare dependencies {{{
       # Use brew on macOS.
       - name: 'Setup: macOS: brew: install lua lua@5.1 luarocks'
         if: ${{ success() && matrix.agentArch == 'macOS' }}
@@ -109,32 +109,32 @@ jobs:
         run: |
           luarocks ${{ matrix.luarocksPreArgs }} install --tree=luarocks lsqlite3complete ${{ matrix.luarocksArgs }}
       # }}}
-      # # Build sharp. {{{
-      # # Use dotnet to restore NuGet packages even when building with mono.
-      # - name: 'Build: dotnet: restore sharp'
-      #   run: |
-      #     dotnet restore sharp/Olympus.Sharp.csproj --verbosity Detailed
-      # # Build using core.
-      # - name: 'Build: dotnet: build sharp'
-      #   if: ${{ success() && matrix.netbuilder == 'core' }}
-      #   run: |
-      #     dotnet build sharp/Olympus.Sharp.csproj --configuration ${{ env.netBuildConfiguration }} "/p:Configuration=${{ env.netBuildConfiguration }}"
-      # # Build using mono.
-      # - name: 'Build: mono: build sharp'
-      #   if: ${{ success() && matrix.netbuilder == 'mono' }}
-      #   run: |
-      #     msbuild sharp/Olympus.Sharp.sln "/p:Configuration=${{ env.netBuildConfiguration }}" "/p:Platform=${{ env.netBuildPlatform }}"
-      # # }}}
-      # # Build launcher-winforms. {{{
-      # - name: 'Build: dotnet: restore launcher-winforms'
-      #   if: ${{ success() && matrix.agentArch == 'windows' }}
-      #   run: |
-      #     dotnet restore launcher-winforms/Olympus.csproj --verbosity Detailed
-      # - name: 'Build: dotnet: build launcher-winforms'
-      #   if: ${{ success() && matrix.agentArch == 'windows' }}
-      #   run: |
-      #     dotnet build launcher-winforms/Olympus.csproj --configuration ${{ env.netBuildConfiguration }} "/p:Configuration=${{ env.netBuildConfiguration }}"
-      # # }}}
+      # Build sharp. {{{
+      # Use dotnet to restore NuGet packages even when building with mono.
+      - name: 'Build: dotnet: restore sharp'
+        run: |
+          dotnet restore sharp/Olympus.Sharp.csproj --verbosity Detailed
+      # Build using core.
+      - name: 'Build: dotnet: build sharp'
+        if: ${{ success() && matrix.netbuilder == 'core' }}
+        run: |
+          dotnet build sharp/Olympus.Sharp.csproj --configuration ${{ env.netBuildConfiguration }} "/p:Configuration=${{ env.netBuildConfiguration }}"
+      # Build using mono.
+      - name: 'Build: mono: build sharp'
+        if: ${{ success() && matrix.netbuilder == 'mono' }}
+        run: |
+          msbuild sharp/Olympus.Sharp.sln "/p:Configuration=${{ env.netBuildConfiguration }}" "/p:Platform=${{ env.netBuildPlatform }}"
+      # }}}
+      # Build launcher-winforms. {{{
+      - name: 'Build: dotnet: restore launcher-winforms'
+        if: ${{ success() && matrix.agentArch == 'windows' }}
+        run: |
+          dotnet restore launcher-winforms/Olympus.csproj --verbosity Detailed
+      - name: 'Build: dotnet: build launcher-winforms'
+        if: ${{ success() && matrix.agentArch == 'windows' }}
+        run: |
+          dotnet build launcher-winforms/Olympus.csproj --configuration ${{ env.netBuildConfiguration }} "/p:Configuration=${{ env.netBuildConfiguration }}"
+      # }}}
       # Create and publish an artifact. {{{
       # Download and unpack LÖVE.
       - name: 'Dist: Download LÖVE'
@@ -219,7 +219,7 @@ jobs:
       - name: "Dist: Copy prebuilt libs"
         if: ${{ success() }}
         run: |
-          sharp/bin/**/!(xunit.*|System.*|Microsoft.*|*.Tests.dll|*.pdb) love/${{ matrix.loveBinaryDirectory }}/sharp
+          cp sharp/bin/**/!(xunit.*|System.*|Microsoft.*|*.Tests.dll|*.pdb) love/${{ matrix.loveBinaryDirectory }}/sharp
       # }}}
       
       # If needed, grab MonoKickstart and shove the prebuilts into the sharp dir. {{{
