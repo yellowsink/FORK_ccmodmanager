@@ -156,4 +156,57 @@ jobs:
           tar -xvf ${{ matrix.loveTAR }} -C love-raw && \
           mv love-raw/dest/* love-raw/ && \
           rmdir love-raw/dest
+      # Copy cached LÖVE, fix it up if needed.
+      - name: 'Dist: Copy and fix cached LÖVE'
+        if: ${{ success() && matrix.loveURL != '' }}
+        shell: pwsh
+        run: |
+          Copy-Item -Path love-raw -Destination love -Recurse
+          if (Test-Path -Path love/love-11.3-win32 -PathType Container) {
+            Move-Item -Path love/love-11.3-win32 -Destination love-win
+            Remove-Item -Path love -Force -Recurse
+            Move-Item -Path love-win -Destination love
+            Invoke-WebRequest -Uri "https://github.com/electron/rcedit/releases/download/v1.1.1/rcedit-x64.exe" -OutFile rcedit.exe
+            ./rcedit.exe love/love.exe `
+              --set-icon icon.ico `
+              --set-version-string Comments ${{ env.GITHUB_SHA }} `
+              --set-version-string CompanyName "Everest Team" `
+              --set-version-string FileDescription Olympus `
+              --set-version-string FileVersion ${{ env.GITHUB_RUN_NUMBER }} `
+              --set-version-string LegalCopyright "See https://github.com/EverestAPI/Olympus/blob/main/LICENSE" `
+              --set-version-string OriginalFilename main.exe `
+              --set-version-string ProductName Olympus `
+              --set-version-string ProductVersion ${{ env.GITHUB_RUN_NUMBER }}
+          }
+      # Create a dummy dir for platforms which don't use prebuilt LÖVE.
+      - name: 'Dist: Create empty LÖVE dir for sad and lonely penguins'
+        if: ${{ success() && matrix.loveURL == '' }}
+        run: mkdir -p love
+      # Update the version.txt in the src dir based on the build number.
+      - name: 'Dist: Update src/version.txt'
+        if: ${{ success() }}
+        shell: pwsh
+        run: |
+          echo "${{ env.GITHUB_RUN_NUMBER }}-gha-${{ env.GITHUB_RUN_ID }}-$((${{ env.GITHUB_SHA }}).Substring(0, 5))" | Set-Content src/version.txt
+      # Bundle src into olympus.love
+      - name: 'Dist: Bundle olympus.love'
+        if: ${{ success() }}
+        shell: pwsh
+        run: |
+          Compress-Archive -Path src/* -DestinationPath olympus.zip
+          Move-Item -Path olympus.zip -Destination olympus.love
+          Copy-Item -Path olympus.love -Destination love/${{ matrix.loveBinaryDirectory }}/olympus.love
+      # Glue it onto the love binary.
+      - name: 'Dist: Glue olympus.love onto LÖVE'
+        if: ${{ success() && matrix.loveBinary != '' }}
+        shell: pwsh
+        run: |
+          if ($PSVersionTable.PSVersion.Major -lt 6) {
+            Get-Content love/${{ matrix.loveBinaryDirectory }}/${{ matrix.loveBinary }},love/${{ matrix.loveBinaryDirectory }}/olympus.love -Encoding Byte -ReadCount 512 | Set-Content love-glued -Encoding Byte
+          } else {
+            Get-Content love/${{ matrix.loveBinaryDirectory }}/${{ matrix.loveBinary }},love/${{ matrix.loveBinaryDirectory }}/olympus.love -AsByteStream -ReadCount 0 | Set-Content love-glued -AsByteStream
+          }
+          Remove-Item -Path love/${{ matrix.loveBinaryDirectory }}/${{ matrix.loveBinary }} -Force
+          Move-Item -Path love-glued -Destination love/${{ matrix.loveBinaryDirectory }}/${{ matrix.loveBinary }}
+          Remove-Item -Path love/${{ matrix.loveBinaryDirectory }}/olympus.love -Force
       # }}}
