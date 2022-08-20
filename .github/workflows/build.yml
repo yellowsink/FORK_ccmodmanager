@@ -252,6 +252,7 @@ jobs:
       # Those usually come from Ubuntu Mono packages with a version close to the MonoKickstart version.
       - name: "Dist: Copy prebuilt mono libs"
         if: ${{ success() }}
+        shell: bash
         run: |
           cp -rv lib-mono/* love/${{ matrix.loveBinaryDirectory }}/sharp
       # }}}
@@ -268,14 +269,20 @@ jobs:
           Remove-Item -Path love/game.ico -Force
           Remove-Item -Path love/love.ico -Force
           Remove-Item -Path love/lovec.exe -Force
+
           Move-Item -Path love/love.exe -Destination love/main.exe
-          New-Item -Path a/windows/main -ItemType Directory
+          New-Item -Path ../a/main -ItemType Directory
           Compress-Archive -Path love/* -DestinationPath ../a/main/dist.zip -Force
+          Move-Item -Path ../a/main/dist.zip .
+
           New-Item -Path ../a/update -ItemType Directory
           Copy-Item -Path olympus.love -Destination ../a/update/olympus.love
           Compress-Archive -Path love/sharp/* -DestinationPath ../a/update/sharp.zip -Force
+          Move-Item -Path ../a/update -Destination update
+
           New-Item -Path ../a/launcher-winforms -ItemType Directory
           Copy-Item -Path launcher-winforms/bin/Release/net452/Olympus.exe -Destination ../a/launcher-winforms/Olympus.exe
+          Move-Item -Path ../a/launcher-winforms -Destination launcher-winforms
       - name: "Dist macOS: Finish"
         if: ${{ success() && matrix.agentArch == 'macOS' }}
         run: |
@@ -300,10 +307,11 @@ jobs:
           chmod a+rx love/${{ matrix.loveBinaryDirectory }}/sharp/Olympus.Sharp.bin*
           codesign --remove-signature love/${{ matrix.loveBinaryDirectory }}/love
           mv love/love.app love/Olympus.app
+          mkdir -p ../a/main
           pushd love
-          mkdir -p a/main
-          zip --symlinks -r a/main/dist.zip *
+          zip --symlinks -v -r ../../a/main/dist.zip *
           popd
+          mv ../a/main/dist.zip .
       - name: "Dist: Linux: Finish"
         if: ${{ success() && matrix.agentArch == 'linux' }}
         run: |
@@ -336,11 +344,11 @@ jobs:
         if: ${{ success() && matrix.agentArch == 'windows' }}
         with:
           name: update
-          path: a/update
+          path: update
       - name: "Dist: Publish launcher-winforms"
         if: ${{ success() && matrix.agentArch == 'windows' }}
         uses: actions/upload-artifact@v3
         with:
           name: launcher-winforms
-          path: a/launcher-winforms
+          path: launcher-winforms
       # }}}
