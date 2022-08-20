@@ -114,8 +114,24 @@ jobs:
       - name: 'Build: dotnet: restore sharp'
         run: |
           dotnet restore sharp/Olympus.Sharp.csproj --verbosity Detailed
+      # Build using core.
       - name: 'Build: dotnet: build sharp'
         if: ${{ success() && matrix.netbuilder == 'core' }}
         run: |
           dotnet build sharp/Olympus.Sharp.csproj --configuration ${{ env.netBuildConfiguration }} "/p:Configuration=${{ env.netBuildConfiguration }}"
+      # Build using mono.
+      - name: 'Build: mono: build sharp'
+        if: ${{ success() && matrix.netbuilder == 'mono' }}
+        run: |
+          msbuild sharp/Olympus.Sharp.sln "/p:Configuration=${{ env.netBuildConfiguration }}" "/p:Platform=${{ env.netBuildPlatform }}"
+      # }}}
+      # Build launcher-winforms. {{{
+      - name: 'Build: dotnet: restore launcher-winforms'
+        if: ${{ success() && matrix.agentArch == 'windows' }}
+        run: |
+          dotnet restore launcher-winforms/Olympus.csproj --verbosity Detailed
+      - name: 'Build: dotnet: build launcher-winforms'
+        if: ${{ success() && matrix.agentArch == 'windows' }}
+        run: |
+          dotnet build launcher-winforms/Olympus.csproj --configuration ${{ env.netBuildConfiguration }} "/p:Configuration=${{ env.netBuildConfiguration }}"
       # }}}
