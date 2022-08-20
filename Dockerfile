@@ -1,4 +1,6 @@
-FROM ubuntu:22.04
+# USE AS `docker run --rm -it -p 8080:8080 -v $(pwd):/Olympus olympus`
+
+FROM ubuntu:22.04 AS builder
 
 # Avoid warnings by switching to noninteractive
 ENV DEBIAN_FRONTEND=noninteractive
@@ -6,10 +8,21 @@ ENV DEBIAN_FRONTEND=noninteractive
 # Set some common environment variables
 ENV PWSH="pwsh -NoLogo -NoProfile -NonInteractive -Command"
 ENV PWSHURL="https://github.com/PowerShell/PowerShell/releases/download/v7.2.5/powershell-lts_7.2.5-1.deb_amd64.deb"
+ENV SERVERURL="https://github.com/halverneus/static-file-server/releases/download/v1.8.8/static-file-server-v1.8.8-linux-arm64"
+ENV jobArchName="linux"
+ENV agentArch="linux"
+ENV artifactPrefix="linux."
+ENV artifactSuffix=""
+ENV monokickURL="https://github.com/flibitijibibo/MonoKickstart.git"
+ENV luarocksArgs="LUA_LIBDIR='/usr/local/opt/lua/lib'"
 ENV LOVEURL="https://github.com/love2d/love/releases/download/11.3/love-11.3-linux-x86_64.tar.gz"
 ENV LOVETAR="love.tar.gz"
+ENV loveBinaryDirectory=""
+ENV loveResourcesDirectory=""
+ENV launcher=""
 
 WORKDIR /
+SHELL ["/bin/sh", "-c"]
 
 # Setup: install common tools
 RUN apt -y update
@@ -24,6 +37,8 @@ RUN wget ${PWSHURL}
 RUN yes | dpkg -i powershell-lts_7.2.5-1.deb_amd64.deb
 RUN apt -y install -f
 
+RUN wget ${SERVERURL} -O serve
+RUN chmod +x serve
 
 # Setup: install dotnet and friends
 RUN apt -y install gnupg ca-certificates dotnet6
@@ -36,25 +51,13 @@ RUN apt -y update && apt -y install \
     luarocks \
     libgtk-3-dev
 
-RUN git clone https://github.com/EverestAPI/Olympus
 WORKDIR /Olympus
+VOLUME /Olympus
+# COPY . .
 
 # Setup: luarocks config
 RUN git config --global url."https://github.com/".insteadOf git://github.com/ && \
     luarocks config lua_version 5.1
 
-# Build: install luarocks dependencies
-RUN luarocks install --tree=luarocks https://raw.githubusercontent.com/0x0ade/lua-subprocess/master/subprocess-scm-1.rockspec && \
-    luarocks install --tree=luarocks https://raw.githubusercontent.com/Vexatos/nativefiledialog/master/lua/nfd-scm-1.rockspec && \
-    luarocks install --tree=luarocks lsqlite3complete
-
-# Build: restore sharp
-RUN dotnet restore sharp/Olympus.Sharp.csproj --verbosity Detailed
-
-# Build: build sharp
-RUN msbuild sharp/*.sln "/p:Configuration=Release" "/p:Platform=Any CPU"
-
-RUN wget -O ${LOVETAR} ${LOVEURL}
-RUN tar -xvzf ${LOVETAR}
-RUN mkdir -p love-raw && \
-    tar xvf ${LOVETAR}
+EXPOSE 8080
+ENTRYPOINT ["./build.sh"]
