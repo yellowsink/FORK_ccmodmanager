@@ -41,6 +41,8 @@ luarocks install --tree=luarocks https://raw.githubusercontent.com/0x0ade/lua-su
 cp -rv luarocks/lib/lua/**/* love/"${loveBinaryDirectory}" && \
 cp -rv lib-${agentArch}/* love/"${loveBinaryDirectory}" && \
 cp -rv sharp/bin/**/!(xunit.*|System.*|Microsoft.*|*.Tests.dll|*.pdb) love/"${loveBinaryDirectory}"/sharp
+rm -rf love/"${loveBinaryDirectory}"/sharp/net452
+cp -rv sharp/bin/**/net452/* love/"${loveBinaryDirectory}"/sharp
 
 git clone "${monokickURL}"
 ${PWSH} "
