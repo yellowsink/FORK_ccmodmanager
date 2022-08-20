@@ -64,77 +64,77 @@ jobs:
         with:
           submodules: 'recursive'
           fetch-depth: 3
-      - name: Setup dotnet
-        uses: actions/setup-dotnet@v2
-        with:
-          dotnet-version: '6.0.x'
-          include-prerelease: true
-      - name: Add msbuild to PATH
-        if: ${{ success() && matrix.agentArch == 'windows' }}
-        uses: microsoft/setup-msbuild@v1.1
-
-      # Prepare dependencies {{{
-      # Use brew on macOS.
-      - name: 'Setup: macOS: brew: install lua lua@5.1 luarocks'
-        if: ${{ success() && matrix.agentArch == 'macOS' }}
-        run: |
-          export HOMEBREW_NO_INSTALL_CLEANUP=1
-          brew install lua lua@5.1 luarocks
-
-      # Use apt on Ubuntu.
-      - name: 'Setup: Linux: apt: install luarocks and deps'
-        if: ${{ success() && matrix.agentArch == 'linux' }}
-        run: |
-          sudo apt -y update && sudo apt -y install luarocks libgtk-3-dev
-
-      # Cross platform setup.
-      - name: 'Setup: luarocks: config'
-        if: ${{ success() && matrix.lualibs == 'luarocks' }}
-        run: |
-          git config --global url."https://github.com/".insteadOf git://github.com/
-          luarocks config lua_version 5.1
-          luarocks
-      # }}}
-      # Build LuaRocks dependencies. {{{
-      - name: 'Build: luarocks: install subprocess'
-        if: ${{ success() && matrix.lualibs == 'luarocks' }}
-        run: |
-          luarocks ${{ matrix.luarocksPreArgs }} install --tree=luarocks https://raw.githubusercontent.com/0x0ade/lua-subprocess/master/subprocess-scm-1.rockspec ${{ matrix.luarocksArgs }}
-      - name: 'Build: luarocks: install nfd'
-        if: ${{ success() && matrix.lualibs == 'luarocks' }}
-        run: |
-          luarocks ${{ matrix.luarocksPreArgs }} install --tree=luarocks https://raw.githubusercontent.com/Vexatos/nativefiledialog/master/lua/nfd-scm-1.rockspec ${{ matrix.luarocksArgs }}
-      - name: 'Build: luarocks: install lsqlite3complete'
-        if: ${{ success() && matrix.lualibs == 'luarocks' }}
-        run: |
-          luarocks ${{ matrix.luarocksPreArgs }} install --tree=luarocks lsqlite3complete ${{ matrix.luarocksArgs }}
-      # }}}
-      # Build sharp. {{{
-      # Use dotnet to restore NuGet packages even when building with mono.
-      - name: 'Build: dotnet: restore sharp'
-        run: |
-          dotnet restore sharp/Olympus.Sharp.csproj --verbosity Detailed
-      # Build using core.
-      - name: 'Build: dotnet: build sharp'
-        if: ${{ success() && matrix.netbuilder == 'core' }}
-        run: |
-          dotnet build sharp/Olympus.Sharp.csproj --configuration ${{ env.netBuildConfiguration }} "/p:Configuration=${{ env.netBuildConfiguration }}"
-      # Build using mono.
-      - name: 'Build: mono: build sharp'
-        if: ${{ success() && matrix.netbuilder == 'mono' }}
-        run: |
-          msbuild sharp/Olympus.Sharp.sln "/p:Configuration=${{ env.netBuildConfiguration }}" "/p:Platform=${{ env.netBuildPlatform }}"
-      # }}}
-      # Build launcher-winforms. {{{
-      - name: 'Build: dotnet: restore launcher-winforms'
-        if: ${{ success() && matrix.agentArch == 'windows' }}
-        run: |
-          dotnet restore launcher-winforms/Olympus.csproj --verbosity Detailed
-      - name: 'Build: dotnet: build launcher-winforms'
-        if: ${{ success() && matrix.agentArch == 'windows' }}
-        run: |
-          dotnet build launcher-winforms/Olympus.csproj --configuration ${{ env.netBuildConfiguration }} "/p:Configuration=${{ env.netBuildConfiguration }}"
-      # }}}
+      # - name: Setup dotnet
+      #   uses: actions/setup-dotnet@v2
+      #   with:
+      #     dotnet-version: '6.0.x'
+      #     include-prerelease: true
+      # - name: Add msbuild to PATH
+      #   if: ${{ success() && matrix.agentArch == 'windows' }}
+      #   uses: microsoft/setup-msbuild@v1.1
+      #
+      # # Prepare dependencies {{{
+      # # Use brew on macOS.
+      # - name: 'Setup: macOS: brew: install lua lua@5.1 luarocks'
+      #   if: ${{ success() && matrix.agentArch == 'macOS' }}
+      #   run: |
+      #     export HOMEBREW_NO_INSTALL_CLEANUP=1
+      #     brew install lua lua@5.1 luarocks
+      #
+      # # Use apt on Ubuntu.
+      # - name: 'Setup: Linux: apt: install luarocks and deps'
+      #   if: ${{ success() && matrix.agentArch == 'linux' }}
+      #   run: |
+      #     sudo apt -y update && sudo apt -y install luarocks libgtk-3-dev
+      #
+      # # Cross platform setup.
+      # - name: 'Setup: luarocks: config'
+      #   if: ${{ success() && matrix.lualibs == 'luarocks' }}
+      #   run: |
+      #     git config --global url."https://github.com/".insteadOf git://github.com/
+      #     luarocks config lua_version 5.1
+      #     luarocks
+      # # }}}
+      # # Build LuaRocks dependencies. {{{
+      # - name: 'Build: luarocks: install subprocess'
+      #   if: ${{ success() && matrix.lualibs == 'luarocks' }}
+      #   run: |
+      #     luarocks ${{ matrix.luarocksPreArgs }} install --tree=luarocks https://raw.githubusercontent.com/0x0ade/lua-subprocess/master/subprocess-scm-1.rockspec ${{ matrix.luarocksArgs }}
+      # - name: 'Build: luarocks: install nfd'
+      #   if: ${{ success() && matrix.lualibs == 'luarocks' }}
+      #   run: |
+      #     luarocks ${{ matrix.luarocksPreArgs }} install --tree=luarocks https://raw.githubusercontent.com/Vexatos/nativefiledialog/master/lua/nfd-scm-1.rockspec ${{ matrix.luarocksArgs }}
+      # - name: 'Build: luarocks: install lsqlite3complete'
+      #   if: ${{ success() && matrix.lualibs == 'luarocks' }}
+      #   run: |
+      #     luarocks ${{ matrix.luarocksPreArgs }} install --tree=luarocks lsqlite3complete ${{ matrix.luarocksArgs }}
+      # # }}}
+      # # Build sharp. {{{
+      # # Use dotnet to restore NuGet packages even when building with mono.
+      # - name: 'Build: dotnet: restore sharp'
+      #   run: |
+      #     dotnet restore sharp/Olympus.Sharp.csproj --verbosity Detailed
+      # # Build using core.
+      # - name: 'Build: dotnet: build sharp'
+      #   if: ${{ success() && matrix.netbuilder == 'core' }}
+      #   run: |
+      #     dotnet build sharp/Olympus.Sharp.csproj --configuration ${{ env.netBuildConfiguration }} "/p:Configuration=${{ env.netBuildConfiguration }}"
+      # # Build using mono.
+      # - name: 'Build: mono: build sharp'
+      #   if: ${{ success() && matrix.netbuilder == 'mono' }}
+      #   run: |
+      #     msbuild sharp/Olympus.Sharp.sln "/p:Configuration=${{ env.netBuildConfiguration }}" "/p:Platform=${{ env.netBuildPlatform }}"
+      # # }}}
+      # # Build launcher-winforms. {{{
+      # - name: 'Build: dotnet: restore launcher-winforms'
+      #   if: ${{ success() && matrix.agentArch == 'windows' }}
+      #   run: |
+      #     dotnet restore launcher-winforms/Olympus.csproj --verbosity Detailed
+      # - name: 'Build: dotnet: build launcher-winforms'
+      #   if: ${{ success() && matrix.agentArch == 'windows' }}
+      #   run: |
+      #     dotnet build launcher-winforms/Olympus.csproj --configuration ${{ env.netBuildConfiguration }} "/p:Configuration=${{ env.netBuildConfiguration }}"
+      # # }}}
       # Create and publish an artifact. {{{
       # Download and unpack LÖVE.
       - name: 'Dist: Download LÖVE'
@@ -188,6 +188,7 @@ jobs:
         shell: pwsh
         run: |
           echo "$env:GITHUB_RUN_NUMBER-gha-$env:GITHUB_RUN_ID-$(($env:GITHUB_SHA).Substring(0, 5))" | Set-Content src/version.txt
+      - run: cat src/version.txt
       # Bundle src into olympus.love
       - name: 'Dist: Bundle olympus.love'
         if: ${{ success() }}
@@ -196,6 +197,10 @@ jobs:
           Compress-Archive -Path src/* -DestinationPath olympus.zip
           Move-Item -Path olympus.zip -Destination olympus.love
           Copy-Item -Path olympus.love -Destination love/${{ matrix.loveBinaryDirectory }}/olympus.love
+      - run: |
+          ls
+          echo '---------------------------------------------------------'
+          ls love
       # Glue it onto the love binary.
       - name: 'Dist: Glue olympus.love onto LÖVE'
         if: ${{ success() && matrix.loveBinary != '' }}
@@ -209,4 +214,8 @@ jobs:
           Remove-Item -Path love/${{ matrix.loveBinaryDirectory }}/${{ matrix.loveBinary }} -Force
           Move-Item -Path love-glued -Destination love/${{ matrix.loveBinaryDirectory }}/${{ matrix.loveBinary }}
           Remove-Item -Path love/${{ matrix.loveBinaryDirectory }}/olympus.love -Force
+      - run: |
+          ls
+          echo '---------------------------------------------------------'
+          ls love
       # }}}
