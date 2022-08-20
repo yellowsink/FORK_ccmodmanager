@@ -223,6 +223,7 @@ jobs:
       # Copy sharp libs.
       - name: "Dist: Copy sharp"
         if: ${{ success() }}
+        shell: bash
         run: |
           shopt -s extglob
           cp -rv sharp/bin/**/!(xunit.*|System.*|Microsoft.*|*.Tests.dll|*.pdb) love/${{ matrix.loveBinaryDirectory }}/sharp
