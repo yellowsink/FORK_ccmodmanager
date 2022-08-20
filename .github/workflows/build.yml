@@ -229,6 +229,8 @@ jobs:
         run: |
           shopt -s extglob
           cp -rv sharp/bin/**/!(xunit.*|System.*|Microsoft.*|*.Tests.dll|*.pdb) love/${{ matrix.loveBinaryDirectory }}/sharp
+          rm -rf love/${{ matrix.loveBinaryDirectory }}/sharp/net452
+          cp -rv sharp/bin/**/net452/* love/${{ matrix.loveBinaryDirectory }}/sharp
       # }}}
       # If needed, grab MonoKickstart and shove the prebuilts into the sharp dir. {{{
       # Clone.
