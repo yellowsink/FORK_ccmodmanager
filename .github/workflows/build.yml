@@ -282,7 +282,8 @@ jobs:
           PLIST=love/love.app/Contents/Info.plist
           rm $PLIST
           ls love
-          ls love.app
+          ls love/love.app
+          ls love/love.app/Contents
           # mv love/${{ matrix.loveBinaryDirectory }}/Info.plist $PLIST
           # plutil -replace CFBundleShortVersionString -string "$GITHUB_RUN_NUMBER" $PLIST
           # curl https://www.libsdl.org/release/SDL2-2.0.14.dmg -o sdl2.dmg
