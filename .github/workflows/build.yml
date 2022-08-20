@@ -169,14 +169,14 @@ jobs:
             Invoke-WebRequest -Uri "https://github.com/electron/rcedit/releases/download/v1.1.1/rcedit-x64.exe" -OutFile rcedit.exe
             ./rcedit.exe love/love.exe `
               --set-icon icon.ico `
-              --set-version-string Comments ${{ env.GITHUB_SHA }} `
+              --set-version-string Comments $env:GITHUB_SHA `
               --set-version-string CompanyName "Everest Team" `
               --set-version-string FileDescription Olympus `
-              --set-version-string FileVersion ${{ env.GITHUB_RUN_NUMBER }} `
+              --set-version-string FileVersion $env:GITHUB_RUN_NUMBER `
               --set-version-string LegalCopyright "See https://github.com/EverestAPI/Olympus/blob/main/LICENSE" `
               --set-version-string OriginalFilename main.exe `
               --set-version-string ProductName Olympus `
-              --set-version-string ProductVersion ${{ env.GITHUB_RUN_NUMBER }}
+              --set-version-string ProductVersion $env:GITHUB_RUN_NUMBER
           }
       # Create a dummy dir for platforms which don't use prebuilt LÖVE.
       - name: 'Dist: Create empty LÖVE dir for sad and lonely penguins'
