@@ -239,104 +239,101 @@ jobs:
       - name: "Dist: Copy MonoKickstart"
         if: ${{ success() && matrix.monokickURL != '' }}
         run: |
-          ls
-          echo "---------------------------"
-          ls MonoKickstart/precompiled
-          cp MonoKickstart/precompiled/* love/${{ matrix.loveBinaryDirectory }}/sharp
-      # # Copy special additional mono dependencies.
-      # # Those usually come from Ubuntu Mono packages with a version close to the MonoKickstart version.
-      # - name: "Dist: Copy prebuilt mono libs"
-      #   if: ${{ success() }}
-      #   run: |
-      #     cp lib-mono/**/* love/${{ matrix.loveBinaryDirectory }}/sharp
-      # # }}}
+          cp -rv MonoKickstart/precompiled/* love/${{ matrix.loveBinaryDirectory }}/sharp
+      # Copy special additional mono dependencies.
+      # Those usually come from Ubuntu Mono packages with a version close to the MonoKickstart version.
+      - name: "Dist: Copy prebuilt mono libs"
+        if: ${{ success() }}
+        run: |
+          cp -rv lib-mono/**/* love/${{ matrix.loveBinaryDirectory }}/sharp
+      # }}}
 
-      # # Per-platform bundling steps. {{{
-      # - name: "Dist: Create artifact staging directories"
-      #   run: |
-      #     mkdir a
-      # # Windows
-      # - name: "Dist: Windows: Finish"
-      #   if: ${{ success() && matrix.agentArch == 'windows' }}
-      #   shell: pwsh
-      #   run: |
-      #     Remove-Item -Path love/changes.txt -Force
-      #     Remove-Item -Path love/game.ico -Force
-      #     Remove-Item -Path love/love.ico -Force
-      #     Remove-Item -Path love/lovec.exe -Force
-      #     Move-Item -Path love/love.exe -Destination love/main.exe
-      #     New-Item -Path a/windows/main -ItemType Directory
-      #     Compress-Archive -Path love/* -DestinationPath a/main/dist.zip -Force
-      #     New-Item -Path a/update -ItemType Directory
-      #     Copy-Item -Path olympus.love -Destination a/update/olympus.love
-      #     Compress-Archive -Path love/sharp/* -DestinationPath a/update/sharp.zip -Force
-      #     New-Item -Path a/launcher-winforms -ItemType Directory
-      #     Copy-Item -Path launcher-winforms/bin/Release/net452/Olympus.exe -Destination a/launcher-winforms/Olympus.exe
-      # - name: "Dist macOS: Finish"
-      #   if: ${{ success() && matrix.agentArch == 'macOS' }}
-      #   run: |
-      #     PLIST=love/love.app/Contents/Info.plist
-      #     rm $PLIST
-      #     mv love/${{ matrix.loveBinaryDirectory }}/Info.plist $PLIST
-      #     plutil -replace CFBundleShortVersionString -string "$GITHUB_RUN_NUMBER" $PLIST
-      #     curl https://www.libsdl.org/release/SDL2-2.0.14.dmg -o sdl2.dmg
-      #     hdiutil attach -mountpoint sdl2mount sdl2.dmg
-      #     rm -rf love/love.app/Contents/Frameworks/SDL2.framework
-      #     cp -rf sdl2mount/SDL2.framework love/love.app/Contents/Frameworks/SDL2.framework
-      #     hdiutil detach sdl2mount
-      #     git clone https://luajit.org/git/luajit-2.0.git
-      #     pushd luajit-2.0
-      #     git checkout ec6edc5c39c25e4eb3fca51b753f9995e97215da
-      #     MACOSX_DEPLOYMENT_TARGET=10.7 make
-      #     popd
-      #     cp -f luajit-2.0/src/libluajit.so love/love.app/Contents/Frameworks/Lua.framework/Versions/A/Lua
-      #     cp olympus.sh love/${{ matrix.loveBinaryDirectory }}/olympus.sh
-      #     chmod a+rx love/${{ matrix.loveBinaryDirectory }}/olympus.sh
-      #     chmod a+rx love/${{ matrix.loveBinaryDirectory }}/love
-      #     chmod a+rx love/${{ matrix.loveBinaryDirectory }}/sharp/Olympus.Sharp.bin*
-      #     codesign --remove-signature love/${{ matrix.loveBinaryDirectory }}/love
-      #     mv love/love.app love/Olympus.app
-      #     pushd love
-      #     mkdir a/main
-      #     zip --symlinks -r a/main/dist.zip *
-      #     popd
-      # - name: "Dist: Linux: Finish"
-      #   if: ${{ success() && matrix.agentArch == 'linux' }}
-      #   run: |
-      #     cp olympus.sh love/${{ matrix.loveBinaryDirectory }}/olympus
-      #     chmod a+rx love/${{ matrix.loveBinaryDirectory }}/olympus
-      #     chmod a+rx love/${{ matrix.loveBinaryDirectory }}/love
-      #     chmod a+rx love/${{ matrix.loveBinaryDirectory }}/install.sh
-      #     chmod a+rx love/${{ matrix.loveBinaryDirectory }}/sharp/Olympus.Sharp.bin*
-      #     cp src/data/icon.png love/${{ matrix.loveBinaryDirectory }}/olympus.png
-      #     rm love/${{ matrix.loveBinaryDirectory }}/lib/x86_64-linux-gnu/libz.so.1
-      #     rm love/${{ matrix.loveBinaryDirectory }}/usr/lib/x86_64-linux-gnu/libfreetype.so.6
-      #     rm love/${{ matrix.loveBinaryDirectory }}/love.svg
-      #     rm love/${{ matrix.loveBinaryDirectory }}/love.desktop.in
-      #     rm love/${{ matrix.loveBinaryDirectory }}/license.txt
-      #     pushd love
-      #     mkdir a/main
-      #     zip --symlinks -r a/main/dist.zip *
-      #     popd
-      # # }}}
-      #
-      # # Publish. {{{
-      # - name: "Dist: Publish main"
-      #   if: ${{ success() }}
-      #   uses: actions/upload-artifact@v3
-      #   with:
-      #     name: ${{ matrix.artifactPrefix }}main${{ matrix.artifactSuffix }}
-      #     path: a/main
-      # - name: "Dist: Publish update"
-      #   uses: actions/upload-artifact@v3
-      #   if: ${{ success() && matrix.agentArch == 'windows' }}
-      #   with:
-      #     name: update
-      #     path: a/update
-      # - name: "Dist: Publish launcher-winforms"
-      #   if: ${{ success() && matrix.agentArch == 'windows' }}
-      #   uses: actions/upload-artifact@v3
-      #   with:
-      #     name: launcher-winforms
-      #     path: a/launcher-winforms
-      # # }}}
+      # Per-platform bundling steps. {{{
+      - name: "Dist: Create artifact staging directories"
+        run: |
+          mkdir a
+      # Windows
+      - name: "Dist: Windows: Finish"
+        if: ${{ success() && matrix.agentArch == 'windows' }}
+        shell: pwsh
+        run: |
+          Remove-Item -Path love/changes.txt -Force
+          Remove-Item -Path love/game.ico -Force
+          Remove-Item -Path love/love.ico -Force
+          Remove-Item -Path love/lovec.exe -Force
+          Move-Item -Path love/love.exe -Destination love/main.exe
+          New-Item -Path a/windows/main -ItemType Directory
+          Compress-Archive -Path love/* -DestinationPath a/main/dist.zip -Force
+          New-Item -Path a/update -ItemType Directory
+          Copy-Item -Path olympus.love -Destination a/update/olympus.love
+          Compress-Archive -Path love/sharp/* -DestinationPath a/update/sharp.zip -Force
+          New-Item -Path a/launcher-winforms -ItemType Directory
+          Copy-Item -Path launcher-winforms/bin/Release/net452/Olympus.exe -Destination a/launcher-winforms/Olympus.exe
+      - name: "Dist macOS: Finish"
+        if: ${{ success() && matrix.agentArch == 'macOS' }}
+        run: |
+          PLIST=love/love.app/Contents/Info.plist
+          rm $PLIST
+          mv love/${{ matrix.loveBinaryDirectory }}/Info.plist $PLIST
+          plutil -replace CFBundleShortVersionString -string "$GITHUB_RUN_NUMBER" $PLIST
+          curl https://www.libsdl.org/release/SDL2-2.0.14.dmg -o sdl2.dmg
+          hdiutil attach -mountpoint sdl2mount sdl2.dmg
+          rm -rf love/love.app/Contents/Frameworks/SDL2.framework
+          cp -rf sdl2mount/SDL2.framework love/love.app/Contents/Frameworks/SDL2.framework
+          hdiutil detach sdl2mount
+          git clone https://luajit.org/git/luajit-2.0.git
+          pushd luajit-2.0
+          git checkout ec6edc5c39c25e4eb3fca51b753f9995e97215da
+          MACOSX_DEPLOYMENT_TARGET=10.7 make
+          popd
+          cp -f luajit-2.0/src/libluajit.so love/love.app/Contents/Frameworks/Lua.framework/Versions/A/Lua
+          cp olympus.sh love/${{ matrix.loveBinaryDirectory }}/olympus.sh
+          chmod a+rx love/${{ matrix.loveBinaryDirectory }}/olympus.sh
+          chmod a+rx love/${{ matrix.loveBinaryDirectory }}/love
+          chmod a+rx love/${{ matrix.loveBinaryDirectory }}/sharp/Olympus.Sharp.bin*
+          codesign --remove-signature love/${{ matrix.loveBinaryDirectory }}/love
+          mv love/love.app love/Olympus.app
+          pushd love
+          mkdir a/main
+          zip --symlinks -r a/main/dist.zip *
+          popd
+      - name: "Dist: Linux: Finish"
+        if: ${{ success() && matrix.agentArch == 'linux' }}
+        run: |
+          cp olympus.sh love/${{ matrix.loveBinaryDirectory }}/olympus
+          chmod a+rx love/${{ matrix.loveBinaryDirectory }}/olympus
+          chmod a+rx love/${{ matrix.loveBinaryDirectory }}/love
+          chmod a+rx love/${{ matrix.loveBinaryDirectory }}/install.sh
+          chmod a+rx love/${{ matrix.loveBinaryDirectory }}/sharp/Olympus.Sharp.bin*
+          cp src/data/icon.png love/${{ matrix.loveBinaryDirectory }}/olympus.png
+          rm love/${{ matrix.loveBinaryDirectory }}/lib/x86_64-linux-gnu/libz.so.1
+          rm love/${{ matrix.loveBinaryDirectory }}/usr/lib/x86_64-linux-gnu/libfreetype.so.6
+          rm love/${{ matrix.loveBinaryDirectory }}/love.svg
+          rm love/${{ matrix.loveBinaryDirectory }}/love.desktop.in
+          rm love/${{ matrix.loveBinaryDirectory }}/license.txt
+          pushd love
+          mkdir a/main
+          zip --symlinks -r a/main/dist.zip *
+          popd
+      # }}}
+
+      # Publish. {{{
+      - name: "Dist: Publish main"
+        if: ${{ success() }}
+        uses: actions/upload-artifact@v3
+        with:
+          name: ${{ matrix.artifactPrefix }}main${{ matrix.artifactSuffix }}
+          path: a/main
+      - name: "Dist: Publish update"
+        uses: actions/upload-artifact@v3
+        if: ${{ success() && matrix.agentArch == 'windows' }}
+        with:
+          name: update
+          path: a/update
+      - name: "Dist: Publish launcher-winforms"
+        if: ${{ success() && matrix.agentArch == 'windows' }}
+        uses: actions/upload-artifact@v3
+        with:
+          name: launcher-winforms
+          path: a/launcher-winforms
+      # }}}
