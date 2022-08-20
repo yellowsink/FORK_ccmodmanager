@@ -219,7 +219,7 @@ jobs:
       - name: "Dist: Copy prebuilt libs"
         if: ${{ success() }}
         run: |
-          cp -rv lib-${{ matrix.agentArch }}/**/* love/${{ matrix.loveBinaryDirectory }}
+          cp -rv lib-${{ matrix.agentArch }}/* love/${{ matrix.loveBinaryDirectory }}
       # Copy sharp libs.
       - name: "Dist: Copy sharp"
         if: ${{ success() }}
@@ -251,8 +251,7 @@ jobs:
       - name: "Dist: Copy prebuilt mono libs"
         if: ${{ success() }}
         run: |
-          ls lib-mono
-          # cp -rv lib-mono/**/* love/${{ matrix.loveBinaryDirectory }}/sharp
+          cp -rv lib-mono/* love/${{ matrix.loveBinaryDirectory }}/sharp
       # }}}
       # Per-platform bundling steps. {{{
       - name: "Dist: Create artifact staging directories"
