@@ -74,41 +74,41 @@ jobs:
       #   uses: microsoft/setup-msbuild@v1.1
       #
       # # Prepare dependencies {{{
-      # # Use brew on macOS.
-      # - name: 'Setup: macOS: brew: install lua lua@5.1 luarocks'
-      #   if: ${{ success() && matrix.agentArch == 'macOS' }}
-      #   run: |
-      #     export HOMEBREW_NO_INSTALL_CLEANUP=1
-      #     brew install lua lua@5.1 luarocks
-      #
-      # # Use apt on Ubuntu.
-      # - name: 'Setup: Linux: apt: install luarocks and deps'
-      #   if: ${{ success() && matrix.agentArch == 'linux' }}
-      #   run: |
-      #     sudo apt -y update && sudo apt -y install luarocks libgtk-3-dev
-      #
-      # # Cross platform setup.
-      # - name: 'Setup: luarocks: config'
-      #   if: ${{ success() && matrix.lualibs == 'luarocks' }}
-      #   run: |
-      #     git config --global url."https://github.com/".insteadOf git://github.com/
-      #     luarocks config lua_version 5.1
-      #     luarocks
-      # # }}}
-      # # Build LuaRocks dependencies. {{{
-      # - name: 'Build: luarocks: install subprocess'
-      #   if: ${{ success() && matrix.lualibs == 'luarocks' }}
-      #   run: |
-      #     luarocks ${{ matrix.luarocksPreArgs }} install --tree=luarocks https://raw.githubusercontent.com/0x0ade/lua-subprocess/master/subprocess-scm-1.rockspec ${{ matrix.luarocksArgs }}
-      # - name: 'Build: luarocks: install nfd'
-      #   if: ${{ success() && matrix.lualibs == 'luarocks' }}
-      #   run: |
-      #     luarocks ${{ matrix.luarocksPreArgs }} install --tree=luarocks https://raw.githubusercontent.com/Vexatos/nativefiledialog/master/lua/nfd-scm-1.rockspec ${{ matrix.luarocksArgs }}
-      # - name: 'Build: luarocks: install lsqlite3complete'
-      #   if: ${{ success() && matrix.lualibs == 'luarocks' }}
-      #   run: |
-      #     luarocks ${{ matrix.luarocksPreArgs }} install --tree=luarocks lsqlite3complete ${{ matrix.luarocksArgs }}
-      # # }}}
+      # Use brew on macOS.
+      - name: 'Setup: macOS: brew: install lua lua@5.1 luarocks'
+        if: ${{ success() && matrix.agentArch == 'macOS' }}
+        run: |
+          export HOMEBREW_NO_INSTALL_CLEANUP=1
+          brew install lua lua@5.1 luarocks
+
+      # Use apt on Ubuntu.
+      - name: 'Setup: Linux: apt: install luarocks and deps'
+        if: ${{ success() && matrix.agentArch == 'linux' }}
+        run: |
+          sudo apt -y update && sudo apt -y install luarocks libgtk-3-dev
+
+      # Cross platform setup.
+      - name: 'Setup: luarocks: config'
+        if: ${{ success() && matrix.lualibs == 'luarocks' }}
+        run: |
+          git config --global url."https://github.com/".insteadOf git://github.com/
+          luarocks config lua_version 5.1
+          luarocks
+      # }}}
+      # Build LuaRocks dependencies. {{{
+      - name: 'Build: luarocks: install subprocess'
+        if: ${{ success() && matrix.lualibs == 'luarocks' }}
+        run: |
+          luarocks ${{ matrix.luarocksPreArgs }} install --tree=luarocks https://raw.githubusercontent.com/0x0ade/lua-subprocess/master/subprocess-scm-1.rockspec ${{ matrix.luarocksArgs }}
+      - name: 'Build: luarocks: install nfd'
+        if: ${{ success() && matrix.lualibs == 'luarocks' }}
+        run: |
+          luarocks ${{ matrix.luarocksPreArgs }} install --tree=luarocks https://raw.githubusercontent.com/Vexatos/nativefiledialog/master/lua/nfd-scm-1.rockspec ${{ matrix.luarocksArgs }}
+      - name: 'Build: luarocks: install lsqlite3complete'
+        if: ${{ success() && matrix.lualibs == 'luarocks' }}
+        run: |
+          luarocks ${{ matrix.luarocksPreArgs }} install --tree=luarocks lsqlite3complete ${{ matrix.luarocksArgs }}
+      # }}}
       # # Build sharp. {{{
       # # Use dotnet to restore NuGet packages even when building with mono.
       # - name: 'Build: dotnet: restore sharp'
