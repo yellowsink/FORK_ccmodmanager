@@ -187,7 +187,7 @@ jobs:
         if: ${{ success() }}
         shell: pwsh
         run: |
-          echo "${{ env.GITHUB_RUN_NUMBER }}-gha-${{ env.GITHUB_RUN_ID }}-$((${{ env.GITHUB_SHA }}).Substring(0, 5))" | Set-Content src/version.txt
+          echo "$env:GITHUB_RUN_NUMBER-gha-$env:GITHUB_RUN_ID-$(($env:GITHUB_SHA).Substring(0, 5))" | Set-Content src/version.txt
       # Bundle src into olympus.love
       - name: 'Dist: Bundle olympus.love'
         if: ${{ success() }}
