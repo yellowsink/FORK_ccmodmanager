@@ -135,3 +135,25 @@ jobs:
         run: |
           dotnet build launcher-winforms/Olympus.csproj --configuration ${{ env.netBuildConfiguration }} "/p:Configuration=${{ env.netBuildConfiguration }}"
       # }}}
+      # Create and publish an artifact. {{{
+      # Download and unpack LÖVE.
+      - name: 'Dist: Download LÖVE'
+        if: ${{ success() && matrix.loveURL != '' }}
+        shell: pwsh
+        run: |
+          Invoke-Webrequest -Uri ${{ matrix.loveURL }} -OutFile ${{ matrix.loveZIP }}${{ env.loveTAR }}
+      # Unzip love.zip.
+      - name: 'Dist: Unpack LÖVE (ZIP)'
+        if: ${{ success() && matrix.loveZIP != '' }}
+        shell: pwsh
+        run: |
+          Expand-Archive -Path ${{ matrix.loveZIP }} -DestinationPath love-raw -Force
+      # Untar love.tar.gz.
+      - name: 'Dist: Unpack LÖVE (TAR)'
+        if: ${{ success() && matrix.loveTAR != '' }}
+        run: |
+          mkdir -p love-raw && \
+          tar -xvf ${{ matrix.loveTAR }} -C love-raw && \
+          mv love-raw/dest/* love-raw/ && \
+          rmdir love-raw/dest
+      # }}}
