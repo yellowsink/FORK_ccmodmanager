@@ -281,32 +281,29 @@ jobs:
         run: |
           PLIST=love/love.app/Contents/Info.plist
           rm $PLIST
-          ls love
-          ls love/love.app
-          ls love/love.app/Contents
-          # mv love/${{ matrix.loveBinaryDirectory }}/Info.plist $PLIST
-          # plutil -replace CFBundleShortVersionString -string "$GITHUB_RUN_NUMBER" $PLIST
-          # curl https://www.libsdl.org/release/SDL2-2.0.14.dmg -o sdl2.dmg
-          # hdiutil attach -mountpoint sdl2mount sdl2.dmg
-          # rm -rf love/love.app/Contents/Frameworks/SDL2.framework
-          # cp -rf sdl2mount/SDL2.framework love/love.app/Contents/Frameworks/SDL2.framework
-          # hdiutil detach sdl2mount
-          # git clone https://luajit.org/git/luajit-2.0.git
-          # pushd luajit-2.0
-          # git checkout ec6edc5c39c25e4eb3fca51b753f9995e97215da
-          # MACOSX_DEPLOYMENT_TARGET=10.7 make
-          # popd
-          # cp -f luajit-2.0/src/libluajit.so love/love.app/Contents/Frameworks/Lua.framework/Versions/A/Lua
-          # cp olympus.sh love/${{ matrix.loveBinaryDirectory }}/olympus.sh
-          # chmod a+rx love/${{ matrix.loveBinaryDirectory }}/olympus.sh
-          # chmod a+rx love/${{ matrix.loveBinaryDirectory }}/love
-          # chmod a+rx love/${{ matrix.loveBinaryDirectory }}/sharp/Olympus.Sharp.bin*
-          # codesign --remove-signature love/${{ matrix.loveBinaryDirectory }}/love
-          # mv love/love.app love/Olympus.app
-          # pushd love
-          # mkdir -p a/main
-          # zip --symlinks -r a/main/dist.zip *
-          # popd
+          mv love/${{ matrix.loveBinaryDirectory }}/Info.plist $PLIST
+          plutil -replace CFBundleShortVersionString -string "$GITHUB_RUN_NUMBER" $PLIST
+          curl https://www.libsdl.org/release/SDL2-2.0.14.dmg -o sdl2.dmg
+          hdiutil attach -mountpoint sdl2mount sdl2.dmg
+          rm -rf love/love.app/Contents/Frameworks/SDL2.framework
+          cp -rf sdl2mount/SDL2.framework love/love.app/Contents/Frameworks/SDL2.framework
+          hdiutil detach sdl2mount
+          git clone https://luajit.org/git/luajit-2.0.git
+          pushd luajit-2.0
+          git checkout ec6edc5c39c25e4eb3fca51b753f9995e97215da
+          MACOSX_DEPLOYMENT_TARGET=10.7 make
+          popd
+          cp -f luajit-2.0/src/libluajit.so love/love.app/Contents/Frameworks/Lua.framework/Versions/A/Lua
+          cp olympus.sh love/${{ matrix.loveBinaryDirectory }}/olympus.sh
+          chmod a+rx love/${{ matrix.loveBinaryDirectory }}/olympus.sh
+          chmod a+rx love/${{ matrix.loveBinaryDirectory }}/love
+          chmod a+rx love/${{ matrix.loveBinaryDirectory }}/sharp/Olympus.Sharp.bin*
+          codesign --remove-signature love/${{ matrix.loveBinaryDirectory }}/love
+          mv love/love.app love/Olympus.app
+          pushd love
+          mkdir -p a/main
+          zip --symlinks -r a/main/dist.zip *
+          popd
       - name: "Dist: Linux: Finish"
         if: ${{ success() && matrix.agentArch == 'linux' }}
         run: |
