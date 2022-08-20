@@ -220,7 +220,7 @@ jobs:
         if: ${{ success() }}
         run: |
           shopt -s extglob
-          cp sharp/bin/**/!(xunit.*|System.*|Microsoft.*|*.Tests.dll|*.pdb) love/${{ matrix.loveBinaryDirectory }}/sharp
+          cp -r sharp/bin/**/!(xunit.*|System.*|Microsoft.*|*.Tests.dll|*.pdb) love/${{ matrix.loveBinaryDirectory }}/sharp
       # }}}
       
       # If needed, grab MonoKickstart and shove the prebuilts into the sharp dir. {{{
