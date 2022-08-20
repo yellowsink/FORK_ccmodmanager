@@ -324,22 +324,15 @@ jobs:
           pushd love
           zip --symlinks -v -r ../../a/main/dist.zip *
           popd
-
+          mv ../a/main/dist.zip .
       # }}}
-
-      - name: "Dist: list staging folder"
-        run: |
-          ls ../a
-          echo "------------"
-          ls ../a/main
-
       # Publish. {{{
       - name: "Dist: Publish main"
         if: ${{ success() }}
         uses: actions/upload-artifact@v3
         with:
           name: ${{ matrix.artifactPrefix }}main${{ matrix.artifactSuffix }}
-          path: ../a/main/dist.zip
+          path: dist.zip
       - name: "Dist: Publish update"
         uses: actions/upload-artifact@v3
         if: ${{ success() && matrix.agentArch == 'windows' }}
