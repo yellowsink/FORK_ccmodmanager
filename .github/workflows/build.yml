@@ -213,11 +213,13 @@ jobs:
       # Copy luarocks.
       - name: "Dist: Copy luarocks"
         if: ${{ success() && matrix.lualibs == 'luarocks' }}
+        shell: bash
         run: |
-          cp luarocks/lib/lua/**/* love/${{ matrix.loveBinaryDirectory }}
+          cp -rv luarocks/lib/lua/**/* love/${{ matrix.loveBinaryDirectory }}
       # Copy prebuilt libs.
       - name: "Dist: Copy prebuilt libs"
         if: ${{ success() }}
+        shell: bash
         run: |
           cp -rv lib-${{ matrix.agentArch }}/* love/${{ matrix.loveBinaryDirectory }}
       # Copy sharp libs.
@@ -337,7 +339,7 @@ jobs:
         uses: actions/upload-artifact@v3
         with:
           name: ${{ matrix.artifactPrefix }}main${{ matrix.artifactSuffix }}
-          path: a/main
+          path: ../a/main/dist.zip
       - name: "Dist: Publish update"
         uses: actions/upload-artifact@v3
         if: ${{ success() && matrix.agentArch == 'windows' }}
