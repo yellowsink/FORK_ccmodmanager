@@ -113,9 +113,9 @@ jobs:
       # Use dotnet to restore NuGet packages even when building with mono.
       - name: 'Build: dotnet: restore sharp'
         run: |
-          dotnet restore sharp/*.csproj --verbosity Detailed
+          dotnet restore sharp/Olympus.Sharp.csproj --verbosity Detailed
       - name: 'Build: dotnet: build sharp'
         if: ${{ success() && matrix.netbuilder == 'core' }}
         run: |
-          dotnet build ${{ env.GITHUB_WORKSPACE }}/sharp/*.csproj --configuration ${{ env.netBuildConfiguration }} "/p:Configuration=${{ env.netBuildConfiguration }}"
+          dotnet build ${{ env.GITHUB_WORKSPACE }}/sharp/Olympus.Sharp.csproj --configuration ${{ env.netBuildConfiguration }} "/p:Configuration=${{ env.netBuildConfiguration }}"
       # }}}
