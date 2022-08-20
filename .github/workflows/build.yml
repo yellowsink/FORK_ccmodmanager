@@ -218,9 +218,8 @@ jobs:
       # Copy prebuilt libs.
       - name: "Dist: Copy prebuilt libs"
         if: ${{ success() }}
-        shell: zsh
         run: |
-          setopt extended_glob
+          shopt -s extglob
           cp sharp/bin/**/!(xunit.*|System.*|Microsoft.*|*.Tests.dll|*.pdb) love/${{ matrix.loveBinaryDirectory }}/sharp
       # }}}
       
