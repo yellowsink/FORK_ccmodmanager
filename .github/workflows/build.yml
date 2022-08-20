@@ -242,8 +242,8 @@ jobs:
         run: |
           ls
           echo "---------------------------"
-          ls MonoKickstart
-          # cp MonoKickstart/precompiled/**/* love/${{ matrix.loveBinaryDirectory }}/sharp
+          ls MonoKickstart/precompiled
+          cp MonoKickstart/precompiled/**/* love/${{ matrix.loveBinaryDirectory }}/sharp
       # # Copy special additional mono dependencies.
       # # Those usually come from Ubuntu Mono packages with a version close to the MonoKickstart version.
       # - name: "Dist: Copy prebuilt mono libs"
