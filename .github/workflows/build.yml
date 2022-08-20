@@ -141,7 +141,7 @@ jobs:
         if: ${{ success() && matrix.loveURL != '' }}
         shell: pwsh
         run: |
-          Invoke-Webrequest -Uri ${{ matrix.loveURL }} -OutFile ${{ matrix.loveZIP }} ${{ env.loveTAR }}
+          Invoke-Webrequest -Uri ${{ matrix.loveURL }} -OutFile ${{ matrix.loveZIP }} ${{ matrix.loveTAR }}
       # Unzip love.zip.
       - name: 'Dist: Unpack LÖVE (ZIP)'
         if: ${{ success() && matrix.loveZIP != '' }}
