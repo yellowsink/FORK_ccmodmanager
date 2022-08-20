@@ -219,6 +219,11 @@ jobs:
       - name: "Dist: Copy prebuilt libs"
         if: ${{ success() }}
         run: |
+          cp -rv lib-${{ matrix.agentArch }} love/${{ matrix.loveBinaryDirectory }}
+      # Copy sharp libs.
+      - name: "Dist: Copy sharp"
+        if: ${{ success() }}
+        run: |
           shopt -s extglob
           cp -rv sharp/bin/**/!(xunit.*|System.*|Microsoft.*|*.Tests.dll|*.pdb) love/${{ matrix.loveBinaryDirectory }}/sharp
       # }}}
@@ -245,9 +250,9 @@ jobs:
       - name: "Dist: Copy prebuilt mono libs"
         if: ${{ success() }}
         run: |
-          cp -rv lib-mono/**/* love/${{ matrix.loveBinaryDirectory }}/sharp
+          ls lib-mono
+          # cp -rv lib-mono/**/* love/${{ matrix.loveBinaryDirectory }}/sharp
       # }}}
-
       # Per-platform bundling steps. {{{
       - name: "Dist: Create artifact staging directories"
         run: |
@@ -316,7 +321,6 @@ jobs:
           zip --symlinks -r a/main/dist.zip *
           popd
       # }}}
-
       # Publish. {{{
       - name: "Dist: Publish main"
         if: ${{ success() }}
