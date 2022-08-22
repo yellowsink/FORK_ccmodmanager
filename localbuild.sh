@@ -50,9 +50,9 @@ if [[ ! -d "${SCRIPTDIR}/.cache/MonoKickstart" ]]; then
 fi
 
 if [[ ! -d "${SCRIPTDIR}/.luarocks" ]]; then
-  luarocks install --tree=luarocks https://raw.githubusercontent.com/0x0ade/lua-subprocess/master/subprocess-scm-1.rockspec "${luarocksArgs}" && \
-  luarocks install --tree=luarocks https://raw.githubusercontent.com/Vexatos/nativefiledialog/master/lua/nfd-scm-1.rockspec "${luarocksArgs}" && \
-  luarocks install --tree=luarocks lsqlite3complete "${luarocksArgs}"
+  luarocks install --tree=.luarocks https://raw.githubusercontent.com/0x0ade/lua-subprocess/master/subprocess-scm-1.rockspec "${luarocksArgs}" && \
+  luarocks install --tree=.luarocks https://raw.githubusercontent.com/Vexatos/nativefiledialog/master/lua/nfd-scm-1.rockspec "${luarocksArgs}" && \
+  luarocks install --tree=.luarocks lsqlite3complete "${luarocksArgs}"
 fi
 
 rm -rf love-raw love
