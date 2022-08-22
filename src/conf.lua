@@ -166,8 +166,8 @@ function love.conf(t)
     local config = require("config")
     config.load()
 
-    t.window.title = "Olympus"
-    t.window.icon = "data/icon.png"
+    t.window.title = "CCModManager"
+    t.window.icon = "data/icon2.png"
     t.window.width = 1100
     t.window.minwidth = 1100
     t.window.height = 600
