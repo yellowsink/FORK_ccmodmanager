@@ -9,7 +9,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Olympus {
+namespace CCModManager {
     public class CmdGetRunningPath : Cmd<string, string, string> {
 
         public override bool Taskable => true;

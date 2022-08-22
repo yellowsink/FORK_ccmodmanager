@@ -11,7 +11,7 @@ using System.Runtime.InteropServices;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Olympus {
+namespace CCModManager {
     public unsafe class CmdPoll : Cmd<string, object> {
         public override bool LogRun => false;
         public override object Run(string id) {

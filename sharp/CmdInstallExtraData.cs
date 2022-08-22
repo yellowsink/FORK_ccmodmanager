@@ -18,7 +18,7 @@ using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace Olympus {
+namespace CCModManager {
     public unsafe class CmdInstallExtraData : Cmd<string, string, IEnumerator> {
 
         public override IEnumerator Run(string url, string path) {

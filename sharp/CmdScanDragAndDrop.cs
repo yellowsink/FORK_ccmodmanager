@@ -9,7 +9,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Olympus {
+namespace CCModManager {
     public class CmdScanDragAndDrop : Cmd<string, string> {
         public override string Run(string path) {
             if (path.EndsWith(".zip")) {

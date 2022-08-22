@@ -12,7 +12,7 @@ using System.Runtime.InteropServices;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Olympus {
+namespace CCModManager {
     public unsafe class CmdWebGet : Cmd<string, byte[]> {
         public override bool LogRun => false;
         public override bool Taskable => true;

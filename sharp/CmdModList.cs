@@ -18,7 +18,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using YYProject.XXHash;
 
-namespace Olympus {
+namespace CCModManager {
     public unsafe class CmdModList : Cmd<string, IEnumerator> {
 
         public static HashAlgorithm Hasher = XXHash64.Create();

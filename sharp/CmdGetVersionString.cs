@@ -8,7 +8,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Olympus {
+namespace CCModManager {
     public class CmdGetVersionString : Cmd<string, string> {
 
         public override bool Taskable => true;

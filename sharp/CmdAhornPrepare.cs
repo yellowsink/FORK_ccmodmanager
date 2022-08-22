@@ -16,7 +16,7 @@ using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace Olympus {
+namespace CCModManager {
     public unsafe class CmdAhornPrepare : Cmd<string, string, string, string, CmdAhornGetInfo.Info> {
 
         public override bool Taskable => true;

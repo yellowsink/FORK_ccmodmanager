@@ -16,7 +16,7 @@ using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace Olympus {
+namespace CCModManager {
     public unsafe class CmdInstallMod : Cmd<string, string, IEnumerator> {
 
         public static readonly string MirrorPattern = "https://celestemodupdater.0x0a.de/banana-mirror/{0}.zip";

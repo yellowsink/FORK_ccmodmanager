@@ -12,7 +12,7 @@ using System.Runtime.InteropServices;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Olympus {
+namespace CCModManager {
     public unsafe class CmdWin32SetProgress : Cmd<string, string, float, object> {
 
         public override bool LogRun => false;

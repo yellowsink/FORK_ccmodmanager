@@ -16,7 +16,7 @@ using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace Olympus {
+namespace CCModManager {
     public unsafe class CmdAhornGetInfo : Cmd<CmdAhornGetInfo.Info> {
 
         public override Info Run() {

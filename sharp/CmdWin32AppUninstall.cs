@@ -14,7 +14,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 
-namespace Olympus {
+namespace CCModManager {
     public class CmdWin32AppUninstall : Cmd<bool, string> {
         public override string Run(bool quiet) {
             if (!quiet) {
@@ -40,7 +40,7 @@ namespace Olympus {
 
             if (Program.SelfPath.StartsWith(root)) {
                 string tmpDir = Path.Combine(Path.GetTempPath(), "Olympus.Uninstall");
-                string tmp = Path.Combine(tmpDir, "Olympus.Sharp.exe");
+                string tmp = Path.Combine(tmpDir, "CCModManager.Sharp.exe");
                 try {
                     if (!Directory.Exists(tmpDir))
                         Directory.CreateDirectory(tmpDir);

@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 using YamlDotNet.Serialization;
 using YamlDotNet.Serialization.ObjectFactories;
 
-namespace Olympus {
+namespace CCModManager {
     public static class Extensions {
 
         public static bool ReadLineUntil(this TextReader reader, string wanted) {

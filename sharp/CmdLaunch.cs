@@ -17,7 +17,7 @@ using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace Olympus {
+namespace CCModManager {
     public unsafe class CmdLaunch : Cmd<string, string, bool, string> {
 
         public override bool Taskable => true;

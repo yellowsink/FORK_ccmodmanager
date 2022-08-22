@@ -17,7 +17,7 @@ using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace Olympus {
+namespace CCModManager {
     public unsafe class CmdAhornInstallJulia : Cmd<bool, IEnumerator> {
 
         public static readonly string Version = "1.6.0";

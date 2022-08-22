@@ -16,7 +16,7 @@ using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace Olympus {
+namespace CCModManager {
     public unsafe class CmdDummyTask : Cmd<int, int, IEnumerator> {
 
         public override IEnumerator Run(int count, int sleep) {

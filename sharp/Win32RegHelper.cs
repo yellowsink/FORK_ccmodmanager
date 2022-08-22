@@ -12,7 +12,7 @@ using System.Runtime.InteropServices.ComTypes;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Olympus {
+namespace CCModManager {
     public static class Win32RegHelper {
 
         public static RegistryKey OpenOrCreateKey(string path, bool writable) {

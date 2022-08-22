@@ -7,7 +7,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Olympus {
+namespace CCModManager {
     public static class ProcessHelper {
 
         public static Process Wrap(string name, string args) {

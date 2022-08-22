@@ -10,7 +10,7 @@ using System.Runtime.InteropServices;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Olympus {
+namespace CCModManager {
     public unsafe class CmdGetUWPPackagePath : Cmd<string, string> {
         public override bool Taskable => true;
         public override string Run(string package) {

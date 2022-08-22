@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 using YamlDotNet.Serialization;
 using YamlDotNet.Serialization.ObjectFactories;
 
-namespace Olympus {
+namespace CCModManager {
     public static class YamlHelper {
 
         public static IDeserializer Deserializer = new DeserializerBuilder().IgnoreUnmatchedProperties().Build();

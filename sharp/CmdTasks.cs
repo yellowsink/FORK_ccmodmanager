@@ -7,7 +7,7 @@ using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace Olympus {
+namespace CCModManager {
     public static partial class CmdTasks {
         public static readonly Dictionary<string, CmdTask> All = new Dictionary<string, CmdTask>();
 

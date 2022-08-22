@@ -16,7 +16,7 @@ using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace Olympus {
+namespace CCModManager {
     public unsafe class CmdAhornRunJulia : Cmd<string, bool?, string> {
         public override bool LogRun => false;
         public override bool Taskable => true;

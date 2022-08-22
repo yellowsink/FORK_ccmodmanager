@@ -12,7 +12,7 @@ using System.Runtime.InteropServices.ComTypes;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Olympus {
+namespace CCModManager {
     public class CmdWin32RegGet : Cmd<string, object> {
         public override bool LogRun => false;
         public override object Run(string key) {

@@ -4,10 +4,11 @@
     <OutputType>WinExe</OutputType>
     <TargetFramework>net452</TargetFramework>
     <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
-    <RootNamespace>Olympus</RootNamespace>
+    <RootNamespace>CCModManager</RootNamespace>
     <ApplicationIcon />
     <StartupObject />
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+    <AssemblyName>CCModManager.Sharp</AssemblyName>
   </PropertyGroup>
 
   <ItemGroup>

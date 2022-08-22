@@ -17,7 +17,7 @@ using MonoMod.Utils;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 
-namespace Olympus {
+namespace CCModManager {
     public static class Program {
 
         public static string RootDirectory;

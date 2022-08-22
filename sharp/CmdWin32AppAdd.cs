@@ -12,7 +12,7 @@ using System.Runtime.InteropServices.ComTypes;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Olympus {
+namespace CCModManager {
     public class CmdWin32AppAdd : Cmd<string, string, string> {
 
         public override string Run(string exepath, string version) {

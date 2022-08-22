@@ -18,7 +18,7 @@ using System.Text.RegularExpressions;
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace Olympus {
+namespace CCModManager {
     public unsafe class CmdAhornRunJuliaTask : Cmd<string, bool?, IEnumerator> {
 
         public static readonly Regex EscapeCmdRegex = new Regex("\u001B....|\\^\\[\\[.25.||?\\[.25.|\\^\\[\\[2K|?\\[2K|\\^M");

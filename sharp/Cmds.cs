@@ -10,7 +10,7 @@ using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Olympus {
+namespace CCModManager {
     public static partial class Cmds {
         public static readonly Dictionary<string, Cmd> All = new Dictionary<string, Cmd>();
         public static readonly Dictionary<Type, Cmd> AllByType = new Dictionary<Type, Cmd>();

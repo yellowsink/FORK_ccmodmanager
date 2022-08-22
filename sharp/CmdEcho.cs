@@ -8,7 +8,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Olympus {
+namespace CCModManager {
     public class CmdEcho : Cmd<string, string> {
         public override bool LogRun => false;
         public override string Run(string data) {

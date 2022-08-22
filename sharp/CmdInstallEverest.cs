@@ -16,7 +16,7 @@ using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace Olympus {
+namespace CCModManager {
     public unsafe partial class CmdInstallEverest : Cmd<string, string, IEnumerator> {
 
         public override IEnumerator Run(string root, string artifactBase) {
