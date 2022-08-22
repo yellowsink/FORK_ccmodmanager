@@ -182,7 +182,7 @@ function utils.download(url, headers)
     end
 
     if code == 0 then
-        print("luajit-request returned error code 0, switching to downloading via Olympus.Sharp")
+        print("luajit-request returned error code 0, switching to downloading via CCModManager.Sharp")
         requestStatusChannel:push(0)
         requestStatus = false
         request = nil

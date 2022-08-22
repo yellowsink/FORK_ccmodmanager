@@ -264,7 +264,7 @@ function love.load(args)
     sharp = require("sharp")
     local sharpStatus, sharpError = pcall(sharp.init, debugging or debuggingSharp, debuggingSharp)
     if not sharpStatus then
-        love.window.showMessageBox("Olympus.Sharp Startup Error", "Failed loading Olympus.Sharp: " .. tostring(sharpError), "error")
+        love.window.showMessageBox("CCModManager.Sharp Startup Error", "Failed loading CCModManager.Sharp: " .. tostring(sharpError), "error")
     else
         threader.routine(function()
             for i = 1, 4 do

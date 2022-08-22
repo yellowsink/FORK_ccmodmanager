@@ -38,7 +38,7 @@ local function sharpthread()
         local utils = require("utils")
         local socket = require("socket")
 
-        -- Olympus.Sharp is stored in the sharp subdir.
+        -- CCModManager.Sharp is stored in the sharp subdir.
         -- Running love src/ sets the cwd to the src folder.
         local cwd = fs.getsrc()
         if fs.filename(cwd) == "src" then
@@ -46,7 +46,7 @@ local function sharpthread()
         end
         cwd = fs.joinpath(cwd, "sharp")
 
-        -- The current process ID is used by Olympus.Sharp so that
+        -- The current process ID is used by CCModManager.Sharp so that
         -- it dies when this process dies, without becoming a zombie.
         local pid = nil
         if ffi.os == "Windows" then
@@ -64,18 +64,18 @@ local function sharpthread()
 
         local exename = nil
         if ffi.os == "Windows" then
-            exename = "Olympus.Sharp.exe"
+            exename = "CCModManager.Sharp.exe"
 
         elseif ffi.os == "Linux" then
             if ffi.arch == "x86" then
                 -- Note: MonoKickstart no longer ships with x86 prebuilts.
-                exename = "Olympus.Sharp.bin.x86"
+                exename = "CCModManager.Sharp.bin.x86"
             elseif ffi.arch == "x64" then
-                exename = "Olympus.Sharp.bin.x86_64"
+                exename = "CCModManager.Sharp.bin.x86_64"
             end
 
         elseif ffi.os == "OSX" then
-            exename = "Olympus.Sharp.bin.osx"
+            exename = "CCModManager.Sharp.bin.osx"
         end
 
         local exe = fs.joinpath(cwd, exename)
@@ -337,7 +337,7 @@ local function sharpthread()
                     end
 
                     local argsSharp = {}
-                    -- Olympus.Sharp expects C# Tuples, which aren't lists.
+                    -- CCModManager.Sharp expects C# Tuples, which aren't lists.
                     for i = 1, #args do
                         argsSharp["Item" .. i] = args[i]
                     end

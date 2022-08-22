@@ -2,7 +2,7 @@ local ui, uiu, uie = require("ui").quick()
 local utils = require("utils")
 local alert = require("alert")
 local threader = require("threader")
-local feedparser = require("feedparser")
+local sharp      = require("sharp")
 
 local scene = {
 	name = "Alyxia's Testing Grounds",
@@ -173,6 +173,8 @@ function scene.load()
 	end)
 end
 
-function scene.enter() end
+function scene.enter()
+	print(sharp.testCrap("hi"):result())
+end
 
 return scene
