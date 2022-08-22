@@ -67,8 +67,8 @@ mkdir -p love-raw && \
   rm -rf love-raw
 
 pushd src || exit
-zip -r olympus.love *
-mv olympus.love ../love
+zip -r ccmodmanager.love *
+mv ccmodmanager.love ../love
 popd || exit
 
 cp -r .luarocks/lib/lua/**/* love
@@ -83,8 +83,8 @@ rm -rf "${SCRIPTDIR}/.cache/MonoKickstart/precompiled/kick.bin.x86_64.debug"
 cp -rv "${SCRIPTDIR}"/.cache/MonoKickstart/precompiled/* love/sharp
 cp -rv lib-mono/* love/sharp
 
-cp olympus.sh love/olympus && \
-  chmod a+rx love/olympus && \
+cp ccmodmanager.sh love/ccmodmanager && \
+  chmod a+rx love/ccmodmanager && \
   chmod a+rx love/love && \
   chmod a+rx love/install.sh && \
-  chmod a+rx love/sharp/"${SHARP_NAME}".bin* && \
+  chmod a+rx love/sharp/"${SHARP_NAME}".bin*

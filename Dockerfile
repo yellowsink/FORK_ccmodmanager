@@ -1,4 +1,5 @@
-# USE AS `docker run --rm -it -p 8080:8080 -v $(pwd):/Olympus olympus`
+# BUILD AS `docker build -t ccmodmanager:latest .`
+# USE AS `docker run --rm -it -p 8080:8080 -v $(pwd):/CCModManager ccmodmanager`
 
 FROM ubuntu:22.04 AS builder
 
@@ -51,8 +52,8 @@ RUN apt -y update && apt -y install \
     luarocks \
     libgtk-3-dev
 
-WORKDIR /Olympus
-VOLUME /Olympus
+WORKDIR /CCModManager
+VOLUME /CCModManager
 # COPY . .
 
 # Setup: luarocks config

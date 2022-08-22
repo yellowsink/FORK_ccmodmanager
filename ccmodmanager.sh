@@ -1,5 +1,5 @@
 #!/bin/sh
-# Olympus launch script bundled with Linux and macOS builds.
+# CCModManager launch script bundled with Linux and macOS builds.
 
 # macOS doesn't have readlink -f and Linux can symlink this launch script.
 realpath() {
@@ -8,7 +8,7 @@ realpath() {
 
 cd "$(dirname "$(realpath "$0")")" || exit 1
 
-if [ -f "olympus.new.love" ]; then
+if [ -f "ccmodmanager.new.love" ]; then
     if [ -n "${OLYMPUS_RESTARTER_PID+x}" ]; then
         attempt=0
         while [ "$attempt" -lt 30 ] && kill -0 "$OLYMPUS_RESTARTER_PID"; do
@@ -17,8 +17,8 @@ if [ -f "olympus.new.love" ]; then
         done
     fi
 
-    mv "olympus.love" "olympus.old.love"
-    mv "olympus.new.love" "olympus.love"
+    mv "ccmodmanager.love" "ccmodmanager.old.love"
+    mv "ccmodmanager.new.love" "ccmodmanager.love"
 fi
 
 if [ "$(uname)" = "Darwin" ]; then
@@ -30,11 +30,11 @@ else
 fi
 
 if [ -f "love" ]; then
-    ./love --fused olympus.love $@
+    ./love --fused ccmodmanager.love $@
 elif command -v love >/dev/null 2>&1; then
-    love --fused olympus.love $@
+    love --fused ccmodmanager.love $@
 elif command -v love2d >/dev/null 2>&1; then
-    love2d --fused olympus.love $@
+    love2d --fused ccmodmanager.love $@
 else
     echo "love2d not found!"
 fi

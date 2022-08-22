@@ -11,7 +11,7 @@ LOVETAR="love.tar.gz"
 SHARP_NAME="CCModManager.Sharp"
 loveBinaryDirectory=""
 
-rm -rf luarocks MonoKickstart love love-raw love.tar.gz olympus.zip olympus.love
+rm -rf luarocks MonoKickstart love love-raw love.tar.gz ccmodmanager.zip ccmodmanager.love
 
 dotnet restore sharp/"${SHARP_NAME}".csproj --verbosity Detailed
 
@@ -26,9 +26,9 @@ mkdir -p love-raw && \
   cp -rv love-raw love
 
 ${PWSH} "
-  Compress-Archive -Path src/* -DestinationPath olympus.zip -Force && 
-  Move-Item -Path olympus.zip -Destination olympus.love &&
-  Copy-Item -Path olympus.love -Destination love/${loveBinaryDirectory}/olympus.love
+  Compress-Archive -Path src/* -DestinationPath ccmodmanager.zip -Force && 
+  Move-Item -Path ccmodmanager.zip -Destination ccmodmanager.love &&
+  Copy-Item -Path ccmodmanager.love -Destination love/${loveBinaryDirectory}/ccmodmanager.love
 "
 
 ls
@@ -58,12 +58,12 @@ cp -rv lib-mono/* love/"${loveBinaryDirectory}"/sharp
 
 mkdir ../a
 
-cp -v olympus.sh love/"${loveBinaryDirectory}"/olympus && \
-  chmod a+rx love/"${loveBinaryDirectory}"/olympus && \
+cp -v ccmodmanager.sh love/"${loveBinaryDirectory}"/ccmodmanager && \
+  chmod a+rx love/"${loveBinaryDirectory}"/ccmodmanager && \
   chmod a+rx love/"${loveBinaryDirectory}"/love && \
   chmod a+rx love/"${loveBinaryDirectory}"/install.sh && \
   chmod a+rx love/"${loveBinaryDirectory}"/sharp/"${SHARP_NAME}".bin* && \
-  cp -v src/data/icon.png love/"${loveBinaryDirectory}"/olympus.png && \
+  cp -v src/data/icon.png love/"${loveBinaryDirectory}"/ccmodmanager.png && \
   rm -v love/"${loveBinaryDirectory}"/lib/x86_64-linux-gnu/libz.so.1 && \
   rm -v love/"${loveBinaryDirectory}"/usr/lib/x86_64-linux-gnu/libfreetype.so.6 && \
   rm -v love/"${loveBinaryDirectory}"/love.svg && \
@@ -75,7 +75,7 @@ cp -v olympus.sh love/"${loveBinaryDirectory}"/olympus && \
   popd && \
   mv ../a/main/dist.zip .
 
-rm -rf luarocks MonoKickstart love love-raw love.tar.gz olympus.zip olympus.love
+rm -rf luarocks MonoKickstart love love-raw love.tar.gz ccmodmanager.zip ccmodmanager.love
 mkdir /web
 mv dist.zip /web
 PORT=8080 FOLDER=/web /serve 

@@ -7,9 +7,9 @@ cd "$SRCDIR" || exit 1
 echo "Olympus exists at $SRCDIR"
 echo "For a full installation experience, this script will set up the following:"
 
-DESKTOPSRCFILE="$SRCDIR/olympus.desktop"
-BINSRCFILE="$SRCDIR/olympus"
-ICONSRCFILE="$SRCDIR/olympus.png"
+DESKTOPSRCFILE="$SRCDIR/ccmodmanager.desktop"
+BINSRCFILE="$SRCDIR/ccmodmanager"
+ICONSRCFILE="$SRCDIR/ccmodmanager.png"
 
 if [ "$EUID" -ne 0 ]; then
     if [ -n "$XDG_DATA_HOME" ]; then

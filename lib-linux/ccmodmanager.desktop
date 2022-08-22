@@ -2,9 +2,9 @@
 Type=Application
 Version=1.0
 Name=Olympus
-Comment=Celeste Mod Manager
-Exec=olympus %u
-Icon=olympus
+Comment=CrossCode Mod Manager
+Exec=ccmodmanager %u
+Icon=ccmodmanager
 Terminal=false
 Categories=Game;Application;
 MimeType=x-scheme-handler/everest
