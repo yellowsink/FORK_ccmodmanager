@@ -11,8 +11,12 @@ using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 
 namespace CCModManager {
-    class Package {
-        public string version { get; set; }
+    class Changelog {
+        public class ChangelogItem
+        {
+            public string version { get; set; }
+        }
+        public ChangelogItem[] changelog { get; set; }
     }
 
     public class CmdGetVersionString : Cmd<string, string> {
@@ -25,28 +29,17 @@ namespace CCModManager {
         }
 
         public static Tuple<string, Version, Version> GetVersion(string root) {
-            if (File.Exists(Path.Combine(root, "Celeste.exe")) &&
-                File.Exists(Path.Combine(root, "AppxManifest.xml")) &&
-                File.Exists(Path.Combine(root, "xboxservices.config"))) {
-                try {
-                    using (File.Open(Path.Combine(root, "Celeste.exe"), FileMode.Open, FileAccess.Read, FileShare.ReadWrite | FileShare.Delete)) {
-                        // no-op, just try to see if the file can be opened at all.
-                    }
-                } catch {
-                    return new Tuple<string, Version, Version>("Unsupported version of Celeste.", null, null);
-                }
-            }
-
             try
             {
-                Package packageJson;
-                using (StreamReader reader = new StreamReader(Path.Combine(root, "package.json")))
+                Changelog.ChangelogItem[] changelog;
+                using (StreamReader reader = new StreamReader(Path.Combine(root, "assets", "data", "changelog.json")))
                 using (JsonTextReader json = new JsonTextReader(reader))
                 {
-                    packageJson = JsonSerializer.Create().Deserialize(json, typeof(Package)) as Package;
+                    Changelog data = JsonSerializer.Create().Deserialize(json, typeof(Changelog)) as Changelog;
+                    changelog = data.changelog;
                 }
 
-                string versionString = packageJson.version;
+                string versionString = changelog[0].version;
                 List<int> versionInts = new List<int>();
                 foreach (var num in versionString.Split('.'))
                 {
