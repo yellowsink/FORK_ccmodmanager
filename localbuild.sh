@@ -1,10 +1,13 @@
 #!/usr/bin/env bash
 
 set -euo pipefail
+shopt -s extglob
 
 SCRIPTDIR=$( cd -- "$( dirname -- "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )
 LOVEURL="https://github.com/love2d/love/releases/download/11.3/love-11.3-linux-x86_64.tar.gz"
 LOVETAR="love.tar.gz"
+monokickURL="https://github.com/flibitijibibo/MonoKickstart.git"
+SHARP_NAME="CCModManager.Sharp"
 luarocksArgs="LUA_LIBDIR='/usr/local/opt/lua/lib'"
 
 # Utility functions {{{
@@ -42,7 +45,20 @@ if [[ ! -e "${SCRIPTDIR}/.cache/love.tar.gz" ]]; then
   wget -O "${SCRIPTDIR}/.cache/${LOVETAR}" ${LOVEURL}
 fi
 
+if [[ ! -d "${SCRIPTDIR}/.cache/MonoKickstart" ]]; then
+  git clone "${monokickURL}" "${SCRIPTDIR}/.cache/MonoKickstart"
+fi
+
+if [[ ! -d "${SCRIPTDIR}/.luarocks" ]]; then
+  luarocks install --tree=luarocks https://raw.githubusercontent.com/0x0ade/lua-subprocess/master/subprocess-scm-1.rockspec "${luarocksArgs}" && \
+  luarocks install --tree=luarocks https://raw.githubusercontent.com/Vexatos/nativefiledialog/master/lua/nfd-scm-1.rockspec "${luarocksArgs}" && \
+  luarocks install --tree=luarocks lsqlite3complete "${luarocksArgs}"
+fi
+
 rm -rf love-raw love
+
+dotnet exec "/usr/share/dotnet/sdk/6.0.108/MSBuild.dll" sharp/"${SHARP_NAME}".sln "/p:Configuration=Release" "/p:Platform=Any CPU"
+
 mkdir -p love-raw && \
   tar -xvf "${SCRIPTDIR}/.cache/${LOVETAR}" -C love-raw && \
   mv love-raw/dest/* love-raw && \
@@ -55,16 +71,20 @@ zip -r olympus.love *
 mv olympus.love ../love
 popd || exit
 
-if [[ ! -d "${SCRIPTDIR}/.luarocks" ]]; then
-  luarocks install --tree=luarocks https://raw.githubusercontent.com/0x0ade/lua-subprocess/master/subprocess-scm-1.rockspec "${luarocksArgs}" && \
-  luarocks install --tree=luarocks https://raw.githubusercontent.com/Vexatos/nativefiledialog/master/lua/nfd-scm-1.rockspec "${luarocksArgs}" && \
-  luarocks install --tree=luarocks lsqlite3complete "${luarocksArgs}"
-fi
-
 cp -r .luarocks/lib/lua/**/* love
+cp -r .luarocks/share/lua/**/* love
 cp -r lib-linux/* love
+cp -rv sharp/bin/**/!(xunit.*|System.*|Microsoft.*|*.Tests.dll|*.pdb) love/sharp
+mv love/sharp/net452/* love/sharp
+rm -rf love/sharp/net452
+
+cp "${SCRIPTDIR}/.cache/MonoKickstart/precompiled/kick.bin.x86_64" "${SCRIPTDIR}/.cache/MonoKickstart/precompiled/${SHARP_NAME}.bin.x86_64"
+rm -rf "${SCRIPTDIR}/.cache/MonoKickstart/precompiled/kick.bin.x86_64.debug"
+cp -rv "${SCRIPTDIR}"/.cache/MonoKickstart/precompiled/* love/sharp
+cp -rv lib-mono/* love/sharp
 
 cp olympus.sh love/olympus && \
   chmod a+rx love/olympus && \
   chmod a+rx love/love && \
-  chmod a+rx love/install.sh
+  chmod a+rx love/install.sh && \
+  chmod a+rx love/sharp/"${SHARP_NAME}".bin* && \

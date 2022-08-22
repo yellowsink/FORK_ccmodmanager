@@ -6,6 +6,7 @@ env:
   FORCE_COLOR: true
   netBuildPlatform: "Any CPU"
   netBuildConfiguration: "Release"
+  sharpName: "CCModManager.Sharp"
 
 jobs:
   build:
@@ -113,17 +114,17 @@ jobs:
       # Use dotnet to restore NuGet packages even when building with mono.
       - name: "Build: dotnet: restore sharp"
         run: |
-          dotnet restore sharp/Olympus.Sharp.csproj --verbosity Detailed
+          dotnet restore sharp/${{ env.sharpName }}.csproj --verbosity Detailed
       # Build using core.
       - name: "Build: dotnet: build sharp"
         if: ${{ success() && matrix.netbuilder == 'core' }}
         run: |
-          dotnet build sharp/Olympus.Sharp.csproj --configuration ${{ env.netBuildConfiguration }} "/p:Configuration=${{ env.netBuildConfiguration }}"
+          dotnet build sharp/${{ env.sharpName }}.csproj --configuration ${{ env.netBuildConfiguration }} "/p:Configuration=${{ env.netBuildConfiguration }}"
       # Build using mono.
       - name: "Build: mono: build sharp"
         if: ${{ success() && matrix.netbuilder == 'mono' }}
         run: |
-          msbuild sharp/Olympus.Sharp.sln "/p:Configuration=${{ env.netBuildConfiguration }}" "/p:Platform=${{ env.netBuildPlatform }}"
+          msbuild sharp/${{ env.sharpName }}.sln "/p:Configuration=${{ env.netBuildConfiguration }}" "/p:Platform=${{ env.netBuildPlatform }}"
       # }}}
       # Build launcher-winforms. {{{
       - name: "Build: dotnet: restore launcher-winforms"
@@ -170,12 +171,12 @@ jobs:
             ./rcedit.exe love/love.exe `
               --set-icon icon.ico `
               --set-version-string Comments $env:GITHUB_SHA `
-              --set-version-string CompanyName "Everest Team" `
-              --set-version-string FileDescription Olympus `
+              --set-version-string CompanyName "CCDirectLink" `
+              --set-version-string FileDescription CCModManager `
               --set-version-string FileVersion $env:GITHUB_RUN_NUMBER `
-              --set-version-string LegalCopyright "See https://github.com/EverestAPI/Olympus/blob/main/LICENSE" `
+              --set-version-string LegalCopyright "See https://github.com/lexisother/CCModManager/blob/main/LICENSE" `
               --set-version-string OriginalFilename main.exe `
-              --set-version-string ProductName Olympus `
+              --set-version-string ProductName CCModManager `
               --set-version-string ProductVersion $env:GITHUB_RUN_NUMBER
           }
       # Create a dummy dir for platforms which don't use prebuilt LÖVE.
@@ -242,8 +243,8 @@ jobs:
         if: ${{ success() && matrix.monokickURL != '' }}
         shell: pwsh
         run: |
-          Move-Item -Path MonoKickstart/precompiled/kick.bin.osx -Destination MonoKickstart/precompiled/Olympus.Sharp.bin.osx
-          Move-Item -Path MonoKickstart/precompiled/kick.bin.x86_64 -Destination MonoKickstart/precompiled/Olympus.Sharp.bin.x86_64
+          Move-Item -Path MonoKickstart/precompiled/kick.bin.osx -Destination MonoKickstart/precompiled/${{ env.sharpName }}.bin.osx
+          Move-Item -Path MonoKickstart/precompiled/kick.bin.x86_64 -Destination MonoKickstart/precompiled/${{ env.sharpName }}.bin.x86_64
           Remove-Item -Path MonoKickstart/precompiled/kick.bin.x86_64.debug -Force
       # Copy the precompiled folder into the sharp folder.
       - name: "Dist: Copy MonoKickstart"
@@ -306,7 +307,7 @@ jobs:
           cp olympus.sh love/${{ matrix.loveBinaryDirectory }}/olympus.sh
           chmod a+rx love/${{ matrix.loveBinaryDirectory }}/olympus.sh
           chmod a+rx love/${{ matrix.loveBinaryDirectory }}/love
-          chmod a+rx love/${{ matrix.loveBinaryDirectory }}/sharp/Olympus.Sharp.bin*
+          chmod a+rx love/${{ matrix.loveBinaryDirectory }}/sharp/${{ env.sharpName }}.bin*
           codesign --remove-signature love/${{ matrix.loveBinaryDirectory }}/love
           mv love/love.app love/Olympus.app
           mkdir -p ../a/main
@@ -321,7 +322,7 @@ jobs:
           chmod a+rx love/${{ matrix.loveBinaryDirectory }}/olympus
           chmod a+rx love/${{ matrix.loveBinaryDirectory }}/love
           chmod a+rx love/${{ matrix.loveBinaryDirectory }}/install.sh
-          chmod a+rx love/${{ matrix.loveBinaryDirectory }}/sharp/Olympus.Sharp.bin*
+          chmod a+rx love/${{ matrix.loveBinaryDirectory }}/sharp/${{ env.sharpName }}.bin*
           cp -v src/data/icon.png love/${{ matrix.loveBinaryDirectory }}/olympus.png
           rm -v love/${{ matrix.loveBinaryDirectory }}/lib/x86_64-linux-gnu/libz.so.1
           rm -v love/${{ matrix.loveBinaryDirectory }}/usr/lib/x86_64-linux-gnu/libfreetype.so.6
