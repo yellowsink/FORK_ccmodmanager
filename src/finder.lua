@@ -20,7 +20,7 @@ local finder = {}
 
 local channelCache = love.thread.getChannel("finderCache")
 
-finder.defaultName = "Celeste"
+finder.defaultName = "CrossCode"
 -- https://www.microsoft.com/en-us/p/celeste/bwmql2rpwbhb
 -- https://bspmts.mp.microsoft.com/v1/public/catalog/Retail/Products/bwmql2rpwbhb/applockerdata
 finder.defaultUWPName = "MattMakesGamesInc.Celeste_79daxvg0dq3v6"
@@ -585,13 +585,13 @@ function finder.fixRoot(root, appname)
 
     for i = 1, #dirs do
         local path = dirs[i]
-        if fs.isFile(fs.joinpath(path, appname .. ".exe")) then
+        if fs.isFile(fs.joinpath(path, appname)) then
             print("[finder]", "found " .. appname .. ".exe root", path)
             return path
         end
     end
 
-    if root:match("[Cc]eleste") then
+    if root:match("CrossCode") then
         print("[finder]", "found install root without Celeste.exe", root)
     end
     return nil
