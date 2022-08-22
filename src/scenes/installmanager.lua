@@ -289,22 +289,22 @@ function scene.reloadManual()
         else
             foundAny = false
             local info = uie.label([[
-Olympus needs to know which Celeste installations you want to manage.
+CCModManager needs to know which CrossCode installations you want to manage.
 Automatically found installations will be listed below and can be added to this list.
-Manually select Celeste.exe if no installations have been found automatically.]])
+Manually select the CrossCode binary if no installations have been found automatically.]])
             listManual:addChild(info)
 
             local function handleFound(task, all)
                 foundAny = #all > 0
                 if foundAny then
                     info.text = [[
-Olympus needs to know which Celeste installations you want to manage.
+CCModManager needs to know which CrossCode installations you want to manage.
 You can add automatically found installations from the list below to this one.
 ]]
                 else
                     info.text = [[
-Olympus needs to know which Celeste installations you want to manage.
-No installations were found automatically. Manually select Celeste.exe to add it to Olympus.
+CCModManager needs to know which CrossCode installations you want to manage.
+No installations were found automatically. Manually select the CrossCode binary to add it to CCModManager.
 ]]
                 end
             end
@@ -317,7 +317,7 @@ No installations were found automatically. Manually select Celeste.exe to add it
             end
         end
 
-        listManual:addChild(uie.button("Manually select Celeste.exe", scene.browse):with(utils.important(24, function() return not foundAny end)))
+        listManual:addChild(uie.button("Manually select CrossCode binary", scene.browse):with(utils.important(24, function() return not foundAny end)))
     end)
 end
 
