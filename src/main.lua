@@ -597,7 +597,7 @@ function love.load(args)
     alert.init(root:findChild("alertroot"))
     notify.init(root:findChild("notifyroot"))
 
-    scener.set("mainmenu")
+    scener.set("alyx")
     require("modinstaller").register()
 
     require("dragndrop")
