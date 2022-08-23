@@ -17,9 +17,13 @@ using System.Threading;
 using System.Threading.Tasks;
 
 namespace CCModManager {
-    public unsafe partial class CmdInstallCCLoader : Cmd<string, string, string, IEnumerator> {
+    public unsafe partial class CmdInstallCCLoader : Cmd<string, string, string, IEnumerator> 
+    {
 
-        public override IEnumerator Run(string root, string artifactBase, string sha) {
+        public override IEnumerator Run(string root, string artifactBase, string sha)
+        {
+            string PathOrig = Path.Combine(root, "orig");
+
             // if (artifactBase.StartsWith("file://")) {
             // artifactBase = artifactBase.Substring("file://".Length);
             // yield return Status($"Unzipping {Path.GetFileName(artifactBase)}", false, "download", false);
@@ -35,6 +39,24 @@ namespace CCModManager {
             //             yield return Unpack(zip, root);
             //     }
             // }
+
+            if (!Directory.Exists(PathOrig))
+            {
+                yield return Status("Creating backup orig directory", false, "monomod", false);
+                Directory.CreateDirectory(PathOrig);
+            }
+
+            string[] toBackup = { "package.json" };
+            foreach (string s in toBackup)
+            {
+                string from = Path.Combine(root, "package.json");
+                string to = Path.Combine(PathOrig, Path.GetFileName(from));
+                if (File.Exists(from) && !File.Exists(to))
+                {
+                    yield return Status($"Backing up {from} => {to}", false, "monomod", false);
+                    File.Copy(from, to);
+                }
+            }
 
             yield return Status("Downloading CCLoader", false, "download", false);
 
