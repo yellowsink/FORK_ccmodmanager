@@ -17,10 +17,10 @@ using System.Threading;
 using System.Threading.Tasks;
 
 namespace CCModManager {
-    public unsafe class CmdUninstallEverest : Cmd<string, string, IEnumerator> {
+    public unsafe class CmdUninstallCCLoader : Cmd<string, string, IEnumerator> {
 
         public override IEnumerator Run(string root, string artifactBase) {
-            yield return Status("Uninstalling Everest", false, "backup", false);
+            yield return Status("Uninstalling CCLoader", false, "backup", false);
 
             string origdir = Path.Combine(root, "orig");
             if (!Directory.Exists(origdir)) {
