@@ -93,7 +93,9 @@ Use the latest ]],
 						.row({ uie.icon("download"):with({ scale = 21 / 256 }), uie.label("Install") })
 						:with({ clip = false, cacheable = false })
 						:with(uiu.styleDeep),
-					function() end
+					function()
+						scene.install()
+					end
 				)
 				:hook({
 					update = function(orig, self, ...)
@@ -179,6 +181,66 @@ function scene.install()
 		installer.onLeave = function()
 			scene.installing = nil
 		end
+
+		local url
+		if version == "manual" then
+			installer.update("Select your CCLoader .zip file", false, "")
+
+			local path = fs.openDialog("zip"):result()
+			if not path then
+				installer.update("Installation canceled", 1, "error")
+				installer.done(false, {
+					{
+						"Retry",
+						function()
+							scener.pop()
+							scene.install()
+						end,
+					},
+					{
+						"OK",
+						function()
+							scener.pop()
+						end,
+					},
+				})
+				return
+			end
+
+			url = "file://" .. path
+		else
+			installer.update(string.format("Preparing installation of CCLoader %s", version.version), false, "")
+			url = version.buildURL
+		end
+
+		installer
+			.sharpTask("installCCLoader", install.entry.path, url, string.sub(version.sha, 1, 7))
+			:calls(function(task, last)
+				if not last then
+					return
+				end
+
+				if version == "manual" then
+					installer.update("CCLoader successfully installed", 1, "done")
+				else
+					installer.update(string.format("CCLoader %s successfully installed", version.version), 1, "done")
+				end
+				installer.done({
+					{
+						"Launch",
+						function()
+							utils.launch(install.entry.path)
+							scener.pop(2)
+						end,
+					},
+					{
+						"OK",
+						function()
+							scener.pop(2)
+						end,
+					},
+				})
+			end)
 	end)
 
 	return scene.installing
@@ -188,7 +250,8 @@ function scene.load()
 	threader.routine(function()
 		local utilsAsync = threader.wrap("utils")
 		local releasesTask = utilsAsync.downloadJSON("https://api.github.com/repos/CCDirectLink/CCLoader/releases")
-		local commitsTask = utilsAsync.downloadJSON("https://api.github.com/repos/CCDirectLink/CCLoader/commits")
+		local tagsTask = utilsAsync.downloadJSON("https://api.github.com/repos/CCDirectlink/CCLoader/tags")
+		-- local commitsTask = utilsAsync.downloadJSON("https://api.github.com/repos/CCDirectLink/CCLoader/commits")
 
 		local list = root:findChild("versions")
 
@@ -212,17 +275,35 @@ function scene.load()
 			return
 		end
 
-		local commits, commitsError = commitsTask:result()
-		if not commits then
+		local tags, tagsError = tagsTask:result()
+		if not tags then
+			root:findChild("loadingVersions"):removeSelf()
 			root:findChild("versionsParent"):addChild(uie.paneled
 				.row({
-					uie.label("Error downloading commits list: " .. tostring(commitsError)),
+					uie.label("Error downloading tags list: " .. tostring(tagsError)),
 				})
-				:with({ clip = false, cacheable = false })
+				:with({
+					clip = false,
+					cacheable = false,
+				})
 				:with(uiu.bottombound)
 				:with(uiu.rightbound)
 				:as("error"))
+			list:addChild(manualItem)
+			return
 		end
+
+		-- local commits, commitsError = commitsTask:result()
+		-- if not commits then
+		-- 	root:findChild("versionsParent"):addChild(uie.paneled
+		-- 		.row({
+		-- 			uie.label("Error downloading commits list: " .. tostring(commitsError)),
+		-- 		})
+		-- 		:with({ clip = false, cacheable = false })
+		-- 		:with(uiu.bottombound)
+		-- 		:with(uiu.rightbound)
+		-- 		:as("error"))
+		-- end
 
 		local firstStable
 		local pinSpacer
@@ -230,6 +311,12 @@ function scene.load()
 		for ri = 1, #releases do
 			local release = releases[ri]
 			local version = utils.split(release.tag_name, "/", true)[1]
+
+			for _, tag in ipairs(tags) do
+				if release.tag_name == tag.name then
+					release.sha = tag.commit.sha
+				end
+			end
 
 			local text = {}
 			local info = ""
@@ -244,6 +331,7 @@ function scene.load()
 			end
 
 			release.version = version
+			release.buildURL = release.zipball_url
 
 			local pin = false
 
@@ -263,27 +351,31 @@ function scene.load()
 				if not pinSpacer then
 					pinSpacer = true
 					list:addChild(
-						uie.row({
-							uie.label("All Versions"),
-						}):with({
-							style = {
-								padding = 4,
-							},
-						}),
+						uie
+							.row({
+								uie.label("All Versions"),
+							})
+							:with({
+								style = {
+									padding = 4,
+								},
+							}),
 						1
 					)
 					list:addChild(
-						uie.row({
-							uie.icon("pin"):with({
-								scale = 16 / 256,
-								y = 2,
+						uie
+							.row({
+								uie.icon("pin"):with({
+									scale = 16 / 256,
+									y = 2,
+								}),
+								uie.label("Pinned"),
+							})
+							:with({
+								style = {
+									padding = 4,
+								},
 							}),
-							uie.label("Pinned"),
-						}):with({
-							style = {
-								padding = 4,
-							},
-						}),
 						1
 					)
 				end
