@@ -345,7 +345,7 @@ scene.launchrow = uie.row({
 		end)
 		:with(uiu.fillWidth(2.5 + 32 + 2 + 4))
 		:with(uiu.at(0, 0)),
-	buttonBig("cogwheel", "", "everest")
+	buttonBig("cogwheel", "", "ccloader")
 		:with({
 			width = 48,
 		})
@@ -359,7 +359,7 @@ scene.launchrow = uie.row({
 	:with(uiu.fillWidth)
 	:as("launchrow")
 
-scene.installbtn = buttonBig("mainmenu/ccloader", "Install CCLoader", "everest")
+scene.installbtn = buttonBig("mainmenu/ccloader", "Install CCLoader", "ccloader")
 	:with(utils.important(32))
 	:with(uiu.fillWidth)
 	:as("installbtn")
