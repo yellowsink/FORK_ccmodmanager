@@ -3,6 +3,7 @@ local scener = require("scener")
 local utils = require("utils")
 local alert = require("alert")
 local threader = require("threader")
+local sharp    = require("sharp")
 local alyx = scener.preload("alyx")
 require("love.system")
 
@@ -244,6 +245,41 @@ function scene.install()
 	end)
 
 	return scene.installing
+end
+
+function scene.uninstall()
+	local install = root:findChild("installs").selected
+	install = install and install.data
+
+	if not install then
+		return
+	end
+
+	local installer = scener.push("installer")
+	installer.update("Preparing uninstallation of CCLoader", false, "backup")
+
+	installer.sharpTask("uninstallCCLoader", install.entry.path):calls(function(task, last)
+		if not last then
+			return
+		end
+
+		installer.update("CCLoader successfully uninstalled", 1, "done")
+		installer.done({
+			{
+				"Launch",
+				function()
+					sharp.launch(install.entry.path)
+					scener.pop(2)
+				end
+			},
+			{
+				"OK",
+				function()
+					scener.pop(2)
+				end
+			}
+		})
+	end)
 end
 
 function scene.load()
