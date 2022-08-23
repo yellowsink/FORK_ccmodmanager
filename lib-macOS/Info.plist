@@ -7,17 +7,17 @@
 	<key>CFBundleDevelopmentRegion</key>
 	<string>English</string>
 	<key>CFBundleExecutable</key>
-	<string>olympus.sh</string>
+	<string>ccmodmanager.sh</string>
 	<key>CFBundleIconFile</key>
 	<string>OS X AppIcon</string>
 	<key>CFBundleIconName</key>
 	<string>OS X AppIcon</string>
 	<key>CFBundleIdentifier</key>
-	<string>everest.olympus</string>
+	<string>ccdirectlink.ccmodmanager</string>
 	<key>CFBundleInfoDictionaryVersion</key>
 	<string>6.0</string>
 	<key>CFBundleName</key>
-	<string>olympus</string>
+	<string>ccmodmanager</string>
 	<key>CFBundlePackageType</key>
 	<string>APPL</string>
 	<key>CFBundleShortVersionString</key>
@@ -49,7 +49,7 @@
 	<key>NSHighResolutionCapable</key>
 	<true/>
 	<key>NSHumanReadableCopyright</key>
-	<string>MIT License - see EverestAPI/Olympus on GitHub</string>
+	<string>MIT License - see CCDirectLink/CCModManager on GitHub</string>
 	<key>NSPrincipalClass</key>
 	<string>NSApplication</string>
 	<key>NSSupportsAutomaticGraphicsSwitching</key>
@@ -58,10 +58,10 @@
 	<array>
 		<dict>
 			<key>CFBundleURLName</key>
-			<string>Olympus Everest URL handler</string>
+			<string>CCModManager CCLoader URL handler</string>
 			<key>CFBundleURLSchemes</key>
 			<array>
-				<string>everest</string>
+				<string>ccloader</string>
 			</array>
 		</dict>
 	</array>
