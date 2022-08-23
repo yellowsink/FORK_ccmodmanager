@@ -341,10 +341,10 @@ scene.launchrow = uie.row({
 		:with(uiu.fillWidth(2.5 + 32 + 2 + 4))
 		:with(uiu.at(0, 0)),
 	buttonBig("mainmenu/celeste", "CrossCode", function()
-			utils.launch(nil, false, true)
+			utils.launch(nil, true, true)
 		end)
 		:with(uiu.fillWidth(2.5 + 32 + 2 + 4))
-		:with(uiu.at(0, 0)),
+		:with(uiu.at(2.5 - 32 - 2, 0)),
 	buttonBig("cogwheel", "", "ccloader")
 		:with({
 			width = 48,
