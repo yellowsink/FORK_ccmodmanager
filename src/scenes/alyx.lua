@@ -264,7 +264,7 @@ Press the manage button below.]]),
 	end
 end
 
-local root = uie.column({
+local root = uie.row({
 	uie.paneled
 		.column({
 
@@ -297,6 +297,7 @@ local root = uie.column({
 		})
 		:with(uiu.fillWidth(true))
 		:with(uiu.fillHeight),
+
 	uie.paneled
 		.column({
 			uie.label("News", ui.fontBig),
