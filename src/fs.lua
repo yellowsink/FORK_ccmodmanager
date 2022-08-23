@@ -292,7 +292,7 @@ function fs.getStorageDir()
         return path
     end
 
-    local name = "Olympus"
+    local name = "CCModManager"
 
     local userOS = love.system.getOS()
 
