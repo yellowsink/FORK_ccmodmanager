@@ -585,14 +585,17 @@ function finder.fixRoot(root, appname)
 
     for i = 1, #dirs do
         local path = dirs[i]
-        if fs.isFile(fs.joinpath(path, appname)) then
+        if fs.isFile(fs.joinpath(path, appname)) or fs.isFile(fs.joinpath(path, appname .. '.exe')) then
+            print("[finder]", "found " .. appname .. " root", path)
+            return path
+        elseif fs.isFile(fs.joinpath(path, appname .. '.exe')) then
             print("[finder]", "found " .. appname .. ".exe root", path)
             return path
         end
     end
 
     if root:match("CrossCode") then
-        print("[finder]", "found install root without Celeste.exe", root)
+        print("[finder]", "found install root without CrossCode(.exe)", root)
     end
     return nil
 end
