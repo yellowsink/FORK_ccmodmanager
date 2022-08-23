@@ -62,17 +62,20 @@ namespace CCModManager {
 
                 string status = $"CrossCode {version}";
 
-                Package package;
-                using (StreamReader reader = new StreamReader(Path.Combine(root, "ccloader", "package.json")))
-                using (JsonTextReader json = new JsonTextReader(reader))
+                if (File.Exists(Path.Combine(root, "ccloader", "package.json")))
                 {
-                    Package data = JsonSerializer.Create().Deserialize(json, typeof(Package)) as Package;
-                    package = data;
-                }
+                    Package package;
+                    using (StreamReader reader = new StreamReader(Path.Combine(root, "ccloader", "package.json")))
+                    using (JsonTextReader json = new JsonTextReader(reader))
+                    {
+                        Package data = JsonSerializer.Create().Deserialize(json, typeof(Package)) as Package;
+                        package = data;
+                    }
 
-                if (package.version != null)
-                {
-                    status = $"{status} + CCLoader {package.version}";
+                    if (package.version != null)
+                    {
+                        status = $"{status} + CCLoader {package.version}";
+                    }
                 }
 
                 return new Tuple<string, Version, Version>(status, null, null);
