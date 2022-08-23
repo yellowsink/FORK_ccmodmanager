@@ -59,7 +59,7 @@ end
 local function askExit()
     alert({
         body = [[
-Do you want to close Olympus?]],
+Do you want to close CCModManager?]],
         buttons = {
             {
                 "Yes",
@@ -227,7 +227,7 @@ function love.load(args)
         print("SDL2 version", love.versionSDLStr)
     end
 
-    print("Olympus version", utils.trim(utils.load("version.txt") or "?"))
+    print("CCModManager version", utils.trim(utils.load("version.txt") or "?"))
 
     ui = require("ui")
     uie = require("ui.elements")
