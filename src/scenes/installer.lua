@@ -369,18 +369,18 @@ function scene.sharpTask(id, ...)
                     function()
                         alert({
                             body = [[
-You can ask for help in the Celeste Discord server.
-An invite can be found on the Everest website.
+You can ask for help in the CCModding Discord server.
+An invite can be found on the CCDirectLink website.
 
-Please drag and drop your files into the #modding_help channel.
+Please drag and drop your files into the #chat channel.
 Before uploading, check your logs for sensitive info (f.e. your username).]],
                             buttons = {
                                 { "Open log folder", function(container)
                                     utils.openFile(fs.getStorageDir())
                                 end },
 
-                                { "Open Everest Website", function(container)
-                                    utils.openURL("https://everestapi.github.io/")
+                                { "Open CCDirectLink Website", function(container)
+                                    utils.openURL("https://c2dl.info/")
                                     container:close("website")
                                 end },
 
