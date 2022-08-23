@@ -11,6 +11,10 @@ using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 
 namespace CCModManager {
+    class Package
+    {
+        public string version { get; set; }
+    }
     class Changelog {
         public class ChangelogItem
         {
@@ -58,7 +62,18 @@ namespace CCModManager {
 
                 string status = $"CrossCode {version}";
 
-                // TODO: Detect CCLoader installation
+                Package package;
+                using (StreamReader reader = new StreamReader(Path.Combine(root, "ccloader", "package.json")))
+                using (JsonTextReader json = new JsonTextReader(reader))
+                {
+                    Package data = JsonSerializer.Create().Deserialize(json, typeof(Package)) as Package;
+                    package = data;
+                }
+
+                if (package.version != null)
+                {
+                    status = $"{status} + CCLoader {package.version}";
+                }
 
                 return new Tuple<string, Version, Version>(status, null, null);
             } catch (Exception e) {
