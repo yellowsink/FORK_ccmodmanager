@@ -33,8 +33,8 @@ namespace CCModManager {
                 if (string.IsNullOrEmpty(path))
                     return null;
 
-                int indexOfCeleste = path.ToLowerInvariant().IndexOf(procname);
-                int indexOfEnd = path.LastIndexOf(Path.DirectorySeparatorChar, indexOfCeleste);
+                int indexOfCrossCode = path.ToLowerInvariant().IndexOf(procname);
+                int indexOfEnd = path.LastIndexOf(Path.DirectorySeparatorChar, indexOfCrossCode);
                 if (indexOfEnd < 0)
                     indexOfEnd = path.Length;
                 return path.Substring(0, indexOfEnd);

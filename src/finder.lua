@@ -549,6 +549,7 @@ function finder.findRunningInstall(name)
     end
 
     local path = sharp.getRunningPath("", name):result()
+    print("[finder]", "running install", path)
     if not path or #path == 0 then
         return {}
     end
