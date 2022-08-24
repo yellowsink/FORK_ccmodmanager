@@ -8,7 +8,7 @@ local alert = require("alert")
 local notify = require("notify")
 
 local scene = {
-	name = "CCModDB",
+	name = "Mod Manager",
 }
 
 scene.loadingID = 0
