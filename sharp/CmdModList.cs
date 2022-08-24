@@ -22,13 +22,11 @@ using YYProject.XXHash;
 namespace CCModManager {
     class CCMod
     {
+        public string title { get; set; }
         public string name { get; set; }
         public string version { get; set; }
     }
     public unsafe class CmdModList : Cmd<string, IEnumerator> {
-
-        public static HashAlgorithm Hasher = XXHash64.Create();
-
         public override IEnumerator Run(string root) {
             root = Path.Combine(root, "assets", "mods");
             if (!Directory.Exists(root))
@@ -43,7 +41,7 @@ namespace CCModManager {
 
                 Console.Error.WriteLine($"[sharp] CCMod found: {file}");
 
-                ModInfo info = new ModInfo()
+                ModInfo info = new ModInfo
                 {
                     Path = file,
                     IsZIP = true
@@ -55,7 +53,7 @@ namespace CCModManager {
                     using (ZipArchive zip = new ZipArchive(zipStream, ZipArchiveMode.Read))
                     using (Stream stream = (zip.GetEntry("ccmod.json") ?? zip.GetEntry("package.json"))?.Open())
                     using (StreamReader reader = stream == null ? null : new StreamReader(stream))
-                        info.Parse(reader);
+                        info.Parse(reader, reader == null);
                 }
 
                 Console.Error.WriteLine($"[sharp] ModInfo for {file}: {info}");
@@ -73,9 +71,10 @@ namespace CCModManager {
 
                 Console.Error.WriteLine($"[sharp] Mod found {name}");
 
-                ModInfo info = new ModInfo {
+                ModInfo info = new ModInfo
+                {
                     Path = file,
-                    IsZIP = false,
+                    IsZIP = false
                 };
 
                 try {
@@ -106,14 +105,22 @@ namespace CCModManager {
             public string Version;
             public bool IsValid;
 
-            public void Parse(TextReader reader) {
-                using (JsonTextReader json = new JsonTextReader(reader))
+            public void Parse(TextReader reader, bool error = false) {
+                if (error)
                 {
-                    CCMod ccmod = JsonSerializer.Create().Deserialize(json, typeof(CCMod)) as CCMod;
-                    Console.Error.WriteLine($"[sharp] Parsing mod: {ccmod.ToString()}");
-                    Name = ccmod.name;
-                    Version = ccmod.version;
+                    Name = "This CCMod was packaged incorrectly.";
                 }
+                else
+                {
+                    using (JsonTextReader json = new JsonTextReader(reader))
+                    {
+                        CCMod ccmod = JsonSerializer.Create().Deserialize(json, typeof(CCMod)) as CCMod;
+                        Console.Error.WriteLine($"[sharp] Parsing mod: {ccmod}");
+                        Name = ccmod.name ?? ccmod.title;
+                        Version = ccmod.version;
+                    }
+                }
+
             }
         }
 
