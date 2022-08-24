@@ -324,10 +324,10 @@ end
 local launching = {}
 
 function utils.launch(path, vanilla, notify, force)
-    local key = string.format("%s | %s", path, vanilla and "vanilla" or "everest")
+    local key = string.format("%s | %s", path, vanilla and "vanilla" or "ccloader")
     if launching[key] then
         require("alert")([[
-            Celeste is already starting up. Please wait.
+            CrossCode is already starting up. Please wait.
             You can close this window.]])
         return launching[key]
     end
@@ -353,11 +353,11 @@ function utils.launch(path, vanilla, notify, force)
 
         if vanilla then
             container = notify([[
-Celeste is now starting in the background.
+CrossCode is now starting in the background.
 You can close this window.]])
         else
             container = notify([[
-Everest is now starting in the background.
+CCLoader is now starting in the background.
 You can close this window.]])
         end
 
@@ -368,8 +368,8 @@ You can close this window.]])
             end
 
             alert([[
-Olympus couldn't find the Celeste launch binary.
-Please check if the installed version of Celeste matches your OS.
+CCModManager couldn't find the CrossCode launch binary.
+Please check if the installed version of CrossCode matches your OS.
 If you are using Lutris or similar, you are on your own.]])
             launching[key] = nil
             return false
@@ -382,7 +382,7 @@ If you are using Lutris or similar, you are on your own.]])
 
             alert({
                 body = [[
-Celeste (or something looking like Celeste) is already running.
+CrossCode (or something looking like CrossCode) is already running.
 If you can't see it, it's probably still launching]] .. (
     (love.system.getOS() == "Windows" and " - check the Task Manager") or
     (love.system.getOS() == "OS X" and " - check the Activity Monitor") or
