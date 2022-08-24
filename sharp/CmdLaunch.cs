@@ -23,49 +23,41 @@ namespace CCModManager {
         public override bool Taskable => true;
 
         public override string Run(string root, string args, bool force) {
-            if (!force && !string.IsNullOrEmpty(Cmds.Get<CmdGetRunningPath>().Run(root, "Celeste")))
+            if (!force && !string.IsNullOrEmpty(Cmds.Get<CmdGetRunningPath>().Run(root, "CrossCode")))
                 return "running";
 
             Environment.SetEnvironmentVariable("LOCAL_LUA_DEBUGGER_VSCODE", "0");
 
             Process game = new Process();
 
-            // Unix-likes use a MonoKickstart wrapper script / launch binary.
             if (Environment.OSVersion.Platform == PlatformID.Unix ||
                 Environment.OSVersion.Platform == PlatformID.MacOSX) {
-                game.StartInfo.FileName = Path.Combine(root, "Celeste");
-                // 1.3.3.0 splits Celeste into two, so to speak.
+                game.StartInfo.FileName = Path.Combine(root, "CrossCode");
                 if (!File.Exists(game.StartInfo.FileName) && Path.GetFileName(root) == "Resources")
-                    game.StartInfo.FileName = Path.Combine(Path.GetDirectoryName(root), "MacOS", "Celeste");
+                    game.StartInfo.FileName = Path.Combine(Path.GetDirectoryName(root), "MacOS", "nwjs");
             } else {
-                game.StartInfo.FileName = Path.Combine(root, "Celeste.exe");
+                game.StartInfo.FileName = Path.Combine(root, "CrossCode.exe");
             }
 
             if (!File.Exists(game.StartInfo.FileName)) {
-                Console.Error.WriteLine($"Can't start Celeste: {game.StartInfo.FileName} not found!");
+                Console.Error.WriteLine($"Can't start CrossCode: {game.StartInfo.FileName} not found!");
                 return "missing";
             }
 
             Environment.CurrentDirectory = game.StartInfo.WorkingDirectory = Path.GetDirectoryName(game.StartInfo.FileName);
 
-            // Everest versions 1550 + 700 or newer support nextLaunchIsVanilla.txt
-            if (args?.Trim() == "--vanilla") {
-                Version version = CmdGetVersionString.GetVersion(root).Item3;
-                if (version == null || version.Minor == 0 || version.Minor >= (1550 + 700)) {
-                    try {
-                        File.WriteAllText(Path.Combine(root, "nextLaunchIsVanilla.txt"), "This file was created by Olympus and will be deleted automatically.");
-                        args = "";
-                        Console.Error.WriteLine("nextLaunchIsVanilla.txt created");
-                    } catch (Exception e) {
-                        Console.Error.WriteLine($"Failed to create nextLaunchIsVanilla.txt: {e}");
-                    }
-                }
+            if (args?.Trim() == "--vanilla")
+            {
+                // Thank Dima for the brilliance of CCLOADER_OVERRIDE_MAIN_URL,
+                // if not for the translateinator this environment variable might not have existed
+                game.StartInfo.UseShellExecute = false;
+                game.StartInfo.EnvironmentVariables.Add("CCLOADER_OVERRIDE_MAIN_URL", "/assets/node-webkit.html");
             }
 
             if (!string.IsNullOrEmpty(args))
                 game.StartInfo.Arguments = args;
 
-            Console.Error.WriteLine($"Starting Celeste process: {game.StartInfo.FileName} {(string.IsNullOrEmpty(args) ? "(without args)" : args)}");
+            Console.Error.WriteLine($"Starting CrossCode process: {game.StartInfo.FileName} {(string.IsNullOrEmpty(args) ? "(without args)" : args)}");
 
             game.Start();
             return null;
