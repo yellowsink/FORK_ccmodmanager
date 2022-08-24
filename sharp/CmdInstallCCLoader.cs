@@ -42,18 +42,21 @@ namespace CCModManager {
 
             if (!Directory.Exists(PathOrig))
             {
-                yield return Status("Creating backup orig directory", false, "monomod", false);
+                yield return Status("Creating backup orig directory", false, "backup", false);
                 Directory.CreateDirectory(PathOrig);
             }
 
+            int i = 0;
             string[] toBackup = { "package.json" };
             foreach (string s in toBackup)
             {
+                yield return Status($"Backing up {toBackup.Length} files", 0f, "backup", false);
                 string from = Path.Combine(root, "package.json");
                 string to = Path.Combine(PathOrig, Path.GetFileName(from));
                 if (File.Exists(from) && !File.Exists(to))
                 {
-                    yield return Status($"Backing up {from} => {to}", false, "monomod", false);
+                    yield return Status($"Backing up {from} => {to}", i / (float) toBackup.Length, "backup", true);
+                    i++;
                     File.Copy(from, to);
                 }
             }
