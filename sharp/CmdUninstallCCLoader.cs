@@ -52,6 +52,13 @@ namespace CCModManager {
             }
 
             yield return Status($"Reverted {origs.Length} files", 1f, "done", true);
+
+            if (Directory.Exists(Path.Combine(root, "ccloader")))
+            {
+                yield return Status("Deleting CCLoader", 0f, "monomod", false);
+                Directory.Delete(Path.Combine(root, "ccloader"), true);
+                yield return Status("Deleted CCLoader", 1f, "monomod", true);
+            }
         }
 
     }
