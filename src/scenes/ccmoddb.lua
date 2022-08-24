@@ -1,5 +1,6 @@
 local ui, uiu, uie = require("ui").quick()
 local utils = require("utils")
+local threader = require("threader")
 
 local scene = {
 	name = "CCModDB",
@@ -96,7 +97,7 @@ local root = uie.column({
 										cacheable = false,
 										clip = false,
 									}):hook({
-										layoutLateLazy = function(orig, self)
+										layoutLateLazy = function(_, self)
 											-- Always reflow this child whenever its parent gets reflowed.
 											self:layoutLate()
 											self:repaint()
@@ -120,7 +121,7 @@ local root = uie.column({
 							uie.row({
 								uie.field(
 									"",
-									function(self, value, pref)
+									function(_, value, prev)
 										if scene.loadPage and value == prev then
 											scene.loadPage(value)
 										end
@@ -165,5 +166,150 @@ local root = uie.column({
 	_fullroot = true,
 })
 scene.root = root
+
+scene.cache = {}
+
+scene.searchLast = ""
+
+function scene.loadPage(page)
+	if scene.loadingPage then
+		return scene.loadingPage
+	end
+
+	page = page or scene.page
+	if scene.searchLast == page then
+		return threader.routine(function() end)
+	end
+
+	if page == "" then
+		scene.searchLast = ""
+		page = scene.page
+	end
+
+	scene.loadingPage = threader.routine(function()
+		local lists, pagePrev, pageLabel, pageNext = root:findChild("modColumns", "pagePrev", "pageLabel", "pageNext")
+
+		local errorPrev = root:findChild("error")
+		if errorPrev then
+			errorPrev:removeSelf()
+		end
+
+		local isQuery = type(page) == "string"
+
+		if not isQuery then
+			scene.searchLast = ""
+			if page < 0 then
+				page = 0
+			end
+		end
+
+		lists.all = {}
+
+		pagePrev.enabled = false
+		pageNext.enabled = false
+		pagePrev:reflow()
+		pageNext:reflow()
+
+		if not isQuery then
+			if page == 0 then
+				pageLabel.text = "Featured"
+			else
+				pageLabel.text = "Page #" .. tostring(page)
+			end
+			scene.page = page
+		else
+			pageLabel.text = page
+			scene.searchLast = page
+		end
+
+		local loading = uie.paneled.row({
+			uie.label("Loading"),
+			uie.spinner():with({
+				width = 16,
+				height = 16
+			})
+		}):with({
+			clip = false,
+			cacheable = false
+		}):with(uiu.bottombound(16)):with(uiu.rightbound(16)):as("loadingMods")
+		scene.root:addChild(loading)
+
+		local entries, entriesError
+		if not isQuery then
+			entries, entriesError = scene.downloadFeaturedEntries()
+		else
+			entries, entriesError = scene.downloadSearchEntries(page)
+		end
+
+		if not entries then
+			loading:removeSelf()
+			root:addChild(uie.paneled.row({
+				uie.label("Error downloading mod list: " .. tostring(entriesError))
+			}):with({
+				clip = false,
+				cacheable = false
+			}):with(uiu.bottombound(16)):with(uiu.rightbound(16)):as("error"))
+    	scene.loadingPage = nil
+    	pagePrev.enabled = not isQuery and page > 0 and ((scene.sort == "latest" and scene.itemtypeFilter.filtervalue == "") or page > 1)
+    	pageNext.enabled = not isQuery
+    	pagePrev:reflow()
+    	pageNext:reflow()
+    	return
+		end
+
+		for _, value in pairs(entries) do
+			lists.next:addChild(scene.item(value))
+		end
+
+    loading:removeSelf()
+    scene.loadingPage = nil
+    -- "Featured" should be inaccessible if there is a sort or a filter
+    pagePrev.enabled = not isQuery and page > 0 and ((scene.sort == "latest" and scene.itemtypeFilter.filtervalue == "") or page > 1)
+    pageNext.enabled = not isQuery
+    pagePrev:reflow()
+    pageNext:reflow()
+	end)
+
+	return scene.loadingPage
+end
+
+function scene.load()
+	scene.loadPage(0)
+end
+
+function scene.downloadFeaturedEntries()
+	local url = "https://github.com/CCDirectLink/CCModDB/raw/master/npDatabase.json"
+	local data = scene.cache[url]
+	if data ~= nil then
+		return data
+	end
+
+	local msg
+	data, msg = threader.wrap("utils").downloadJSON(url):result()
+	if data then
+		scene.cache[url] = data
+	end
+
+	return data, msg
+end
+
+-- TODO: Implement filtering the table based on `query`
+-- possible because the `index` of the table is also the `metadata.name`
+function scene.downloadSearchEntries(query)
+	print("searched for " .. query)
+	local url = "https://github.com/CCDirectLink/CCModDB/raw/master/npDatabase.json"
+	local data = scene.cache[url]
+	local msg
+	if data == nil then
+		data, msg = scene.downloadFeaturedEntries()
+	end
+	return data, msg
+end
+
+-- TODO: Implement UI
+function scene.item(mod)
+	local item = uie.label(mod.metadata.name, ui.fontBig)
+	return item
+end
 
 return scene
