@@ -66,16 +66,17 @@ namespace CCModManager {
                 string file = files[i];
                 string name = Path.GetFileName(file);
                 Console.Error.WriteLine($"[sharp] Checking {name}");
-                if (name == "simplify" || name == "ccloader-version-display")
-                    continue;
-
-                Console.Error.WriteLine($"[sharp] Mod found {name}");
 
                 ModInfo info = new ModInfo
                 {
                     Path = file,
                     IsZIP = false
                 };
+
+                if (name == "simplify" || name == "ccloader-version-display")
+                    info.IsCore = true;
+
+                Console.Error.WriteLine($"[sharp] {(info.IsCore ? "Core " : "")}Mod found {name}");
 
                 try {
                     string jsonPath = Path.Combine(file, "ccmod.json");
@@ -100,6 +101,7 @@ namespace CCModManager {
             public string Path;
             public string Hash;
             public bool IsZIP;
+            public bool IsCore;
 
             public string Name;
             public string Version;

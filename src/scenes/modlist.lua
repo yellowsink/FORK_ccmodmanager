@@ -49,6 +49,10 @@ function scene.item(info)
 
 	local item = uie.paneled
 		.row({
+			(info.IsCore and uie.icon("cogwheel"):with({
+				scale = 16 / 256,
+			})),
+
 			uie
 				.label({
 					{ 1, 1, 1, 1 },
@@ -60,33 +64,36 @@ function scene.item(info)
 
 			uie
 				.row({
-
-					uie.button("Delete", function()
-						alert({
-							body = [[
+					uie
+						.button("Delete", function()
+							alert({
+								body = [[
 Are you sure that you want to delete ]] .. fs.filename(info.Path) .. [[?
 You will need to redownload the mod to use it again.]],
-							buttons = {
-								{
-									"Delete",
-									function(container)
-										if info.IsZIP then
-											fs.remove(info.Path)
-										else
-											-- Have to shell out to sharp for this... recursively deleting directories in Lua can be a pain.
-											local res = sharp.rmDir(info.Path):result()
-											if res == "failed" then
-												notify("Something went wrong while deleting " .. info.Name .. ".")
+								buttons = {
+									{
+										"Delete",
+										function(container)
+											if info.IsZIP then
+												fs.remove(info.Path)
+											else
+												-- Have to shell out to sharp for this... recursively deleting directories in Lua can be a pain.
+												local res = sharp.rmDir(info.Path):result()
+												if res == "failed" then
+													notify("Something went wrong while deleting " .. info.Name .. ".")
+												end
 											end
-										end
-										scene.reload()
-										container:close("OK")
-									end,
+											scene.reload()
+											container:close("OK")
+										end,
+									},
+									{ "Keep" },
 								},
-								{ "Keep" },
-							},
-						})
-					end),
+							})
+						end)
+						:with({
+							enabled = not info.IsCore,
+						}),
 				})
 				:with({
 					clip = false,
