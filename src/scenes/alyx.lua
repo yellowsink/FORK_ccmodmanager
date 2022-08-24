@@ -272,7 +272,14 @@ local root = uie.row({
 				.row({
 					scene.createInstalls(),
 
-					uie.column({}):with({ clip = false }):with(uiu.fillWidth(true)):with(uiu.fillHeight):as("mainlist"),
+					uie
+						.column({
+							buttonBig("cogwheel", "Manage Installed Mods", "modlist", true):with(uiu.fillWidth),
+						})
+						:with({ clip = false })
+						:with(uiu.fillWidth(true))
+						:with(uiu.fillHeight)
+						:as("mainlist"),
 				})
 				:with({
 					clip = false,
