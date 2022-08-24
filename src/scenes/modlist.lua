@@ -61,28 +61,32 @@ function scene.item(info)
 			uie
 				.row({
 
-					uie
-						.button("Delete", function()
-							alert({
-								body = [[
+					uie.button("Delete", function()
+						alert({
+							body = [[
 Are you sure that you want to delete ]] .. fs.filename(info.Path) .. [[?
 You will need to redownload the mod to use it again.]],
-								buttons = {
-									{
-										"Delete",
-										function(container)
+							buttons = {
+								{
+									"Delete",
+									function(container)
+										if info.IsZIP then
 											fs.remove(info.Path)
-											scene.reload()
-											container:close("OK")
-										end,
-									},
-									{ "Keep" },
+										else
+											-- Have to shell out to sharp for this... recursively deleting directories in Lua can be a pain.
+											local res = sharp.rmDir(info.Path):result()
+											if res == "failed" then
+												notify("Something went wrong while deleting " .. info.Name .. ".")
+											end
+										end
+										scene.reload()
+										container:close("OK")
+									end,
 								},
-							})
-						end)
-						:with({
-							enabled = info.IsZIP,
-						}),
+								{ "Keep" },
+							},
+						})
+					end),
 				})
 				:with({
 					clip = false,
@@ -105,7 +109,7 @@ function scene.reload()
 			loading:removeSelf()
 		end
 
-		local loading = uie.paneled
+		loading = uie.paneled
 			.row({
 				uie.label("Loading"),
 				uie.spinner():with({
