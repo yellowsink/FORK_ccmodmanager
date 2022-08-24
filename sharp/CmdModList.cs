@@ -16,47 +16,49 @@ using System.Security.Cryptography;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
+using Newtonsoft.Json;
 using YYProject.XXHash;
 
 namespace CCModManager {
+    class CCMod
+    {
+        public string name { get; set; }
+        public string version { get; set; }
+    }
     public unsafe class CmdModList : Cmd<string, IEnumerator> {
 
         public static HashAlgorithm Hasher = XXHash64.Create();
 
         public override IEnumerator Run(string root) {
-            root = Path.Combine(root, "Mods");
+            root = Path.Combine(root, "assets", "mods");
             if (!Directory.Exists(root))
                 yield break;
-
-            List<string> blacklist;
-            string blacklistPath = Path.Combine(root, "blacklist.txt");
-            if (File.Exists(blacklistPath))
-                blacklist = File.ReadAllLines(blacklistPath).Select(l => (l.StartsWith("#") ? "" : l).Trim()).ToList();
-            else
-                blacklist = new List<string>();
 
             string[] files = Directory.GetFiles(root);
             for (int i = 0; i < files.Length; i++) {
                 string file = files[i];
-                string name = Path.GetFileName(file);
-                if (!file.EndsWith(".zip"))
+                Console.Error.WriteLine($"[sharp] Checking {file}");
+                if (!file.EndsWith(".ccmod"))
                     continue;
 
-                ModInfo info = new ModInfo() {
+                Console.Error.WriteLine($"[sharp] CCMod found: {file}");
+
+                ModInfo info = new ModInfo()
+                {
                     Path = file,
-                    IsZIP = true,
-                    IsBlacklisted = blacklist.Contains(name)
+                    IsZIP = true
                 };
 
                 using (FileStream zipStream = File.Open(file, FileMode.Open, FileAccess.Read, FileShare.ReadWrite | FileShare.Delete)) {
-                    // info.Hash = BitConverter.ToString(Hasher.ComputeHash(zipStream)).Replace("-", "");
                     zipStream.Seek(0, SeekOrigin.Begin);
 
                     using (ZipArchive zip = new ZipArchive(zipStream, ZipArchiveMode.Read))
-                    using (Stream stream = (zip.GetEntry("everest.yaml") ?? zip.GetEntry("everest.yml"))?.Open())
+                    using (Stream stream = (zip.GetEntry("ccmod.json") ?? zip.GetEntry("package.json"))?.Open())
                     using (StreamReader reader = stream == null ? null : new StreamReader(stream))
                         info.Parse(reader);
                 }
+
+                Console.Error.WriteLine($"[sharp] ModInfo for {file}: {info}");
 
                 yield return info;
             }
@@ -65,35 +67,31 @@ namespace CCModManager {
             for (int i = 0; i < files.Length; i++) {
                 string file = files[i];
                 string name = Path.GetFileName(file);
-                if (name == "Cache")
+                Console.Error.WriteLine($"[sharp] Checking {name}");
+                if (name == "simplify" || name == "ccloader-version-display")
                     continue;
 
-                ModInfo info = new ModInfo() {
+                Console.Error.WriteLine($"[sharp] Mod found {name}");
+
+                ModInfo info = new ModInfo {
                     Path = file,
                     IsZIP = false,
-                    IsBlacklisted = blacklist.Contains(name)
                 };
 
                 try {
-                    string yamlPath = Path.Combine(file, "everest.yaml");
-                    if (!File.Exists(yamlPath))
-                        yamlPath = Path.Combine(file, "everest.yml");
+                    string jsonPath = Path.Combine(file, "ccmod.json");
+                    if (!File.Exists(jsonPath))
+                        jsonPath = Path.Combine(file, "package.json");
 
-                    if (File.Exists(yamlPath)) {
-                        using (FileStream stream = File.Open(yamlPath, FileMode.Open, FileAccess.Read, FileShare.ReadWrite | FileShare.Delete))
+                    if (File.Exists(jsonPath)) {
+                        using (FileStream stream = File.Open(jsonPath, FileMode.Open, FileAccess.Read, FileShare.ReadWrite | FileShare.Delete))
                         using (StreamReader reader = new StreamReader(stream))
                             info.Parse(reader);
-
-                        if (!string.IsNullOrEmpty(info.DLL)) {
-                            string dllPath = Path.Combine(file, info.DLL);
-                            if (File.Exists(dllPath)) {
-                                using (FileStream stream = File.Open(dllPath, FileMode.Open, FileAccess.Read, FileShare.ReadWrite | FileShare.Delete))
-                                    info.Hash = BitConverter.ToString(Hasher.ComputeHash(stream)).Replace("-", "");
-                            }
-                        }
                     }
                 } catch (UnauthorizedAccessException) {
                 }
+
+                Console.Error.WriteLine($"[sharp] ModInfo for {name}: {info}");
 
                 yield return info;
             }
@@ -103,24 +101,18 @@ namespace CCModManager {
             public string Path;
             public string Hash;
             public bool IsZIP;
-            public bool IsBlacklisted;
 
             public string Name;
             public string Version;
-            public string DLL;
             public bool IsValid;
 
             public void Parse(TextReader reader) {
-                if (reader != null && YamlHelper.Deserializer.Deserialize(reader) is List<object> yamlRoot &&
-                    yamlRoot.Count != 0 && yamlRoot[0] is Dictionary<object, object> yamlEntry) {
-
-                    IsValid = yamlEntry.TryGetValue("Name", out object yamlName) &&
-                    !string.IsNullOrEmpty(Name = yamlName as string) &&
-                    yamlEntry.TryGetValue("Version", out object yamlVersion) &&
-                    !string.IsNullOrEmpty(Version = yamlVersion as string);
-
-                    if (yamlEntry.TryGetValue("DLL", out object yamlDLL))
-                        DLL = yamlDLL as string;
+                using (JsonTextReader json = new JsonTextReader(reader))
+                {
+                    CCMod ccmod = JsonSerializer.Create().Deserialize(json, typeof(CCMod)) as CCMod;
+                    Console.Error.WriteLine($"[sharp] Parsing mod: {ccmod.ToString()}");
+                    Name = ccmod.name;
+                    Version = ccmod.version;
                 }
             }
         }

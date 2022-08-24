@@ -13,6 +13,7 @@ using Newtonsoft.Json.Linq;
 namespace CCModManager {
     class Package
     {
+        public string name { get; set; }
         public string version { get; set; }
     }
     class Changelog {
