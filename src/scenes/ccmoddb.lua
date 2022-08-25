@@ -298,12 +298,20 @@ end
 function scene.downloadSearchEntries(query)
 	print("searched for " .. query)
 	local url = "https://github.com/CCDirectLink/CCModDB/raw/master/npDatabase.json"
-	local data = scene.cache[url]
+	local interData = scene.cache[url]
 	local msg
-	if data == nil then
-		data, msg = scene.downloadFeaturedEntries()
+	if interData == nil then
+		interData, msg = scene.downloadFeaturedEntries()
 	end
-	return data, msg
+
+	local retdata = {}
+	for key, value in pairs(interData) do
+		if key:match(query) then
+			retdata[key] = value
+		end
+	end
+
+	return retdata, msg
 end
 
 -- TODO: Implement UI
