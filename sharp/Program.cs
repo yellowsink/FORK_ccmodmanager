@@ -52,7 +52,7 @@ namespace CCModManager {
             RootDirectory = Path.GetDirectoryName(Environment.CurrentDirectory);
             ConfigDirectory = Environment.GetEnvironmentVariable("OLYMPUS_CONFIG");
             if (string.IsNullOrEmpty(ConfigDirectory) || !Directory.Exists(ConfigDirectory))
-                ConfigDirectory = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), "Olympus");
+                ConfigDirectory = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), "CCModManager");
             Console.Error.WriteLine(RootDirectory);
 
             // .NET hates it when strong-named dependencies get updated.
@@ -78,10 +78,9 @@ namespace CCModManager {
             // Enable TLS 1.2 to fix connecting to GitHub.
             ServicePointManager.SecurityProtocol |= SecurityProtocolType.Tls12;
 
-            if (args.Length >= 1 && args[0] == "--uninstall" && PlatformHelper.Is(Platform.Windows)) {
-                new CmdWin32AppUninstall().Run(args.Length >= 2 && args[1] == "--quiet");
+            if (args.Length >= 1 && args[0] == "--uninstall" && PlatformHelper.Is(Platform.Windows))
+                // implement self-uninstallation
                 return;
-            }
 
             Process parentProc = null;
             int parentProcID = 0;
@@ -248,7 +247,7 @@ namespace CCModManager {
         public static void ReadLoop(Process parentProc, MessageContext ctx, StreamReader reader, bool verbose, char delimiter = '\0') {
             // JsonTextReader would be neat here but Newtonsoft.Json is unaware of NetworkStreams and tries to READ PAST STRINGS
             while (!(parentProc?.HasExited ?? false)) {
-                // Commands from Olympus come in pairs of two objects:
+                // Commands from CCModManager come in pairs of two objects:
 
                 if (verbose)
                     Console.Error.WriteLine("[sharp] Awaiting next command");

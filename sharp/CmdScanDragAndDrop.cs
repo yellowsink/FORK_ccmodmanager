@@ -16,11 +16,12 @@ namespace CCModManager {
                 try {
                     using (FileStream stream = File.Open(path, FileMode.Open, FileAccess.Read, FileShare.ReadWrite | FileShare.Delete))
                     using (ZipArchive zip = new ZipArchive(stream, ZipArchiveMode.Read)) {
-                        if (zip.GetEntry("everest.yaml") != null || zip.GetEntry("everest.yml") != null)
+                        // TODO: Write better detection of mod vs. ccloader
+                        if (zip.GetEntry("ccmod.json") != null || zip.GetEntry("package.json") != null)
                             return "mod";
 
-                        if (zip.GetEntry("olympus-build/build.zip") != null || zip.GetEntry("main/MiniInstaller.exe") != null)
-                            return "everest";
+                        if (zip.GetEntry("something-ccloader-specific") != null /* ??? */)
+                            return "ccloader";
                     }
                 } catch (Exception e) {
                     Console.Error.WriteLine($"ZIP cannot be scanned: {path}");
