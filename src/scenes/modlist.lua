@@ -45,8 +45,6 @@ function scene.item(info)
 		return nil
 	end
 
-	print(utils.dumpTable(info))
-
 	local item = uie.paneled
 		.row({
 			(info.IsCore and uie.icon("cogwheel"):with({
