@@ -1,5 +1,5 @@
-﻿using System;
-using System.IO;
+﻿using System.IO;
+using System.Threading.Tasks;
 
 namespace CCModManager;
 
@@ -61,4 +61,6 @@ public static class Extensions {
 		return (new TeeStream(dest1, s2), s2);
 	}
 */
+
+	public static async Task<object?> ObjectifyTask<T>(this Task<T> task) => await task;
 }

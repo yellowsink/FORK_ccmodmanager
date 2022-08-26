@@ -200,6 +200,15 @@ public abstract class Cmd {
 
 }
 
+// i haven't added them here, but feel free to add generic versions ig
+// but these are hooked up in ReadLoop and do work async now -- yellowsink 2022-08-26
+public abstract class AsyncCmd : Cmd
+{
+	public abstract Task<object?> RunAsync(object input);
+
+	public override object? Run(object input) => RunAsync(input).GetAwaiter().GetResult();
+}
+
 public abstract class Cmd<TOutput> : Cmd {
 	public override Type?   InputType         => null;
 	public override Type    OutputType        => typeof(TOutput);

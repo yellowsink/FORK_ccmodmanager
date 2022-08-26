@@ -1,37 +1,25 @@
 ﻿using System;
-using System.IO;
-using System.Net;
 using System.Net.Http;
-using System.Text;
+using System.Threading.Tasks;
 
 namespace CCModManager;
 
-public unsafe class CmdWebGet : Cmd<string, byte[]> {
-	public override bool LogRun   => false;
-	public override bool Taskable => true;
+public unsafe class CmdWebGet : /*Cmd<string, byte[]>*/ AsyncCmd
+{
+	public override Type InputType  => typeof(Tuple<string>);
+	public override Type OutputType => typeof(byte[]);
+	public override bool LogRun     => false;
 
-	public override byte[] Run(string url) {
+	public override Task<object?> RunAsync(object input)
+	{
+		var url = ((Tuple<string>) input).Item1;
+		
 		try
 		{
-			var req = new HttpRequestMessage(HttpMethod.Get, url);
-			req.Headers.Add("User-Agent", "CCDirectLink.CCModManager.Sharp");
-			req.Headers.Add("Accept",     "*/*");
-				
-			using var hc     = new HttpClient();
-			var       stream = hc.Send(req).Content.ReadAsStream();
-			using var sr     = new StreamReader(stream);
-			return Encoding.Default.GetBytes(sr.ReadToEnd());
-				
-			/*using var hc = new HttpClient();
+			using var hc = new HttpClient();
 			hc.DefaultRequestHeaders.Add("User-Agent", "CCDirectLink.CCModManager.Sharp");
-			hc.DefaultRequestHeaders.Add("Accept",     "#1#*");
-			return hc.GetByteArrayAsync(url);*/
-
-			/*using (var wc = new WebClient()) {
-				wc.Headers.Set(HttpRequestHeader.UserAgent, $"CCDirectLink.CCModManager.Sharp");
-				wc.Headers.Set(HttpRequestHeader.Accept,    "#2#*");
-				return wc.DownloadData(url);
-			}*/
+			hc.DefaultRequestHeaders.Add("Accept",     "*/*");
+			return hc.GetByteArrayAsync(url).ObjectifyTask();
 		} catch (Exception e) {
 			throw new Exception($"Failed downloading {url}", e);
 		}

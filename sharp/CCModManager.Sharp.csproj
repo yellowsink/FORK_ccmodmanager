@@ -13,49 +13,18 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Mono.Cecil" Version="0.11.4" />
+    <!--<PackageReference Include="Mono.Cecil" Version="0.11.4" />
     <PackageReference Include="MonoMod" Version="22.01.04.03" />
     <PackageReference Include="MonoMod.RuntimeDetour" Version="22.01.04.03" />
     <PackageReference Include="MonoMod.RuntimeDetour.HookGen" Version="22.01.04.03" />
     <PackageReference Include="MonoMod.Utils" Version="22.01.04.03" />
-    <!--<PackageReference Include="Newtonsoft.Json" Version="13.0.1" />-->
+    <PackageReference Include="Newtonsoft.Json" Version="13.0.1" />-->
     <PackageReference Include="YamlDotNet" Version="9.1.0" />
   </ItemGroup>
 
-  <ItemGroup>
-    <!--<Reference Include="System.IO.Compression" />
-    <Reference Include="System.Windows.Forms" />-->
-  </ItemGroup>
-
-  <ItemGroup>
-    <Compile Remove="sharp_sink\CmdDummyTask.cs" />
-    <Compile Remove="sharp_sink\CmdEcho.cs" />
-    <Compile Remove="sharp_sink\CmdFree.cs" />
-    <Compile Remove="sharp_sink\CmdGetRunningPath.cs" />
-    <Compile Remove="sharp_sink\CmdGetUWPPackagePath.cs" />
-    <Compile Remove="sharp_sink\CmdGetVersionString.cs" />
-    <Compile Remove="sharp_sink\CmdInstallCCLoader.cs" />
-    <Compile Remove="sharp_sink\CmdInstallExtraData.cs" />
-    <Compile Remove="sharp_sink\CmdLaunch.cs" />
-    <Compile Remove="sharp_sink\CmdModList.cs" />
-    <Compile Remove="sharp_sink\CmdPoll.cs" />
-    <Compile Remove="sharp_sink\CmdPollWait.cs" />
-    <Compile Remove="sharp_sink\CmdPollWaitBatch.cs" />
-    <Compile Remove="sharp_sink\CmdRestart.cs" />
-    <Compile Remove="sharp_sink\CmdRmDir.cs" />
-    <Compile Remove="sharp_sink\Cmds.cs" />
-    <Compile Remove="sharp_sink\CmdScanDragAndDrop.cs" />
-    <Compile Remove="sharp_sink\CmdStatus.cs" />
-    <Compile Remove="sharp_sink\CmdTasks.cs" />
-    <Compile Remove="sharp_sink\CmdTestCrap.cs" />
-    <Compile Remove="sharp_sink\CmdUninstallCCLoader.cs" />
-    <Compile Remove="sharp_sink\CmdWebGet.cs" />
-    <Compile Remove="sharp_sink\Extensions.cs" />
-    <Compile Remove="sharp_sink\ProcessHelper.cs" />
-    <Compile Remove="sharp_sink\Program.cs" />
-    <Compile Remove="sharp_sink\Win32RegHelper.cs" />
-    <Compile Remove="sharp_sink\XXHash.cs" />
-    <Compile Remove="sharp_sink\YamlHelper.cs" />
-  </ItemGroup>
+  <!--<ItemGroup>
+    <Reference Include="System.IO.Compression" />
+    <Reference Include="System.Windows.Forms" />
+  </ItemGroup>-->
 
 </Project>

@@ -9,14 +9,12 @@ using System.IO;
 using System.Linq;
 using System.Net;
 using System.Net.Sockets;
-using System.Reflection;
 using System.Runtime.InteropServices;
 using System.Text;
 using System.Text.Json;
 using System.Text.Json.Serialization;
 using System.Threading;
 using System.Threading.Tasks;
-using MonoMod.Utils;
 
 namespace CCModManager;
 
@@ -30,11 +28,8 @@ public static class Program {
 	private static readonly Dictionary<string, Message> Cache = new();
 
 	public static void Main(string[] args) {
-		// LMAO DEBUG KEK, do NOT leave this in -- yellowsink 2022-08-26
-		Thread.Sleep(1_000);
-
-		var debug   = true; //false;
-		var verbose = true; //false;
+		var debug   = false;
+		var verbose = false;
 
 		for (var i = 1; i < args.Length; i++)
 		{
@@ -62,10 +57,10 @@ public static class Program {
 		Console.Error.WriteLine(RootDirectory);
 
 		// .NET hates it when strong-named dependencies get updated.
-		AppDomain.CurrentDomain.AssemblyResolve += (asmSender, asmArgs) =>
+		// i dont think this is needed in net non-fw -- yellowsink 2022-08-26 
+		/*AppDomain.CurrentDomain.AssemblyResolve += (asmSender, asmArgs) =>
 		{
-			return null;
-			/*var asmName = new AssemblyName(asmArgs.Name);
+			var asmName = new AssemblyName(asmArgs.Name);
 			if (asmName.Name?.StartsWith("Mono.Cecil") == false)
 				return null;
 
@@ -73,9 +68,10 @@ public static class Program {
 			if (asm != null)
 				return asm;
 
-			return Assembly.LoadFrom(Path.Combine(Path.GetDirectoryName(SelfPath)!, asmName.Name + ".dll"));*/
-		};
+			return Assembly.LoadFrom(Path.Combine(Path.GetDirectoryName(SelfPath)!, asmName.Name + ".dll"));
+		};*/
 
+		// this no longer runs on mono! -- yellowsink 2022-08-26
 		/*if (Type.GetType("Mono.Runtime") != null) {
 			// Mono hates HTTPS.
 			ServicePointManager.ServerCertificateValidationCallback = (sender, certificate, chain, sslPolicyErrors) => {
@@ -86,7 +82,7 @@ public static class Program {
 		// Enable TLS 1.2 to fix connecting to GitHub.
 		ServicePointManager.SecurityProtocol |= SecurityProtocolType.Tls12;
 
-		if (args.Length >= 1 && args[0] == "--uninstall" && PlatformHelper.Is(Platform.Windows)) {
+		if (args.Length >= 1 && args[0] == "--uninstall" && OperatingSystem.IsWindows()) {
 			// implement self-uninstallation
 			return;
 		}
@@ -134,6 +130,7 @@ public static class Program {
 					Environment.Exit(-1);
 				}
 			});
+			// threads.Add(killswitch);
 		}
 
 		Cmds.Init();
@@ -311,8 +308,12 @@ public static class Program {
 				if (verbose || cmd.LogRun)
 					Console.Error.WriteLine($"[sharp] Executing {cid}");
 				
-				// TODO: implement async tasks here -- yellowsink 2022-08-25
-				output = cmd.Taskable ? Task.Run(() => cmd.Run(input)) : cmd.Run(input)!;
+				if (cmd is AsyncCmd ac)
+					output = Task.Run(() => ac.RunAsync(input));
+				else if (cmd.Taskable)
+					output = Task.Run(() => cmd.Run(input));
+				else
+					output = cmd.Run(input)!;
 			} catch (Exception e) {
 				Console.Error.WriteLine($"[sharp] Failed running {cid}: {e}");
 				msg.Error = "cmd failed running: " + e;
