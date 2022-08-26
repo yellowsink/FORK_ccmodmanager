@@ -1,10 +1,6 @@
-namespace CCModManager
+namespace CCModManager;
+
+public unsafe class CmdTestCrap : Cmd<string, string>
 {
-    public unsafe class CmdTestCrap : Cmd<string, string>
-    {
-        public override string Run(string data)
-        {
-            return data;
-        }
-    }
+	public override string Run(string data) => data;
 }

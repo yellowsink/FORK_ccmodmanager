@@ -1,67 +1,50 @@
-﻿using Mono.Cecil;
-using Mono.Cecil.Cil;
-using MonoMod.Utils;
-using System;
-using System.Collections;
-using System.Collections.Generic;
+﻿using System;
 using System.Diagnostics;
-using System.Drawing;
-using System.Globalization;
 using System.IO;
-using System.IO.Compression;
-using System.Linq;
-using System.Net;
-using System.Reflection;
-using System.Runtime.InteropServices;
-using System.Text;
-using System.Threading;
-using System.Threading.Tasks;
 
-namespace CCModManager {
-    public unsafe class CmdLaunch : Cmd<string, string, bool, string> {
+namespace CCModManager;
 
-        public override bool Taskable => true;
+public unsafe class CmdLaunch : Cmd<string, string, bool, string?> {
 
-        public override string Run(string root, string args, bool force) {
-            if (!force && !string.IsNullOrEmpty(Cmds.Get<CmdGetRunningPath>().Run(root, "CrossCode")))
-                return "running";
+	public override bool Taskable => true;
 
-            Environment.SetEnvironmentVariable("LOCAL_LUA_DEBUGGER_VSCODE", "0");
+	public override string? Run(string root, string args, bool force) {
+		if (!force && !string.IsNullOrEmpty(Cmds.Get<CmdGetRunningPath>()?.Run(root, "CrossCode")))
+			return "running";
 
-            Process game = new Process();
+		Environment.SetEnvironmentVariable("LOCAL_LUA_DEBUGGER_VSCODE", "0");
 
-            if (Environment.OSVersion.Platform == PlatformID.Unix ||
-                Environment.OSVersion.Platform == PlatformID.MacOSX) {
-                game.StartInfo.FileName = Path.Combine(root, "CrossCode");
-                if (!File.Exists(game.StartInfo.FileName) && Path.GetFileName(root) == "Resources")
-                    game.StartInfo.FileName = Path.Combine(Path.GetDirectoryName(root), "MacOS", "nwjs");
-            } else {
-                game.StartInfo.FileName = Path.Combine(root, "CrossCode.exe");
-            }
+		var game = new Process();
 
-            if (!File.Exists(game.StartInfo.FileName)) {
-                Console.Error.WriteLine($"Can't start CrossCode: {game.StartInfo.FileName} not found!");
-                return "missing";
-            }
+		if (Environment.OSVersion.Platform == PlatformID.Unix) {
+			game.StartInfo.FileName = Path.Combine(root, "CrossCode");
+			if (!File.Exists(game.StartInfo.FileName) && Path.GetFileName(root) == "Resources")
+				game.StartInfo.FileName = Path.Combine(Path.GetDirectoryName(root)!, "MacOS", "nwjs");
+		} else
+			game.StartInfo.FileName = Path.Combine(root, "CrossCode.exe");
 
-            Environment.CurrentDirectory = game.StartInfo.WorkingDirectory = Path.GetDirectoryName(game.StartInfo.FileName);
+		if (!File.Exists(game.StartInfo.FileName)) {
+			Console.Error.WriteLine($"Can't start CrossCode: {game.StartInfo.FileName} not found!");
+			return "missing";
+		}
 
-            if (args?.Trim() == "--vanilla")
-            {
-                // Thank Dima for the brilliance of CCLOADER_OVERRIDE_MAIN_URL,
-                // if not for the translateinator this environment variable might not have existed
-                game.StartInfo.UseShellExecute = false;
-                game.StartInfo.EnvironmentVariables.Add("CCLOADER_OVERRIDE_MAIN_URL", "/assets/node-webkit.html");
-            }
+		Environment.CurrentDirectory = game.StartInfo.WorkingDirectory = Path.GetDirectoryName(game.StartInfo.FileName)!;
 
-            if (!string.IsNullOrEmpty(args))
-                game.StartInfo.Arguments = args;
+		if (args?.Trim() == "--vanilla")
+		{
+			// Thank Dima for the brilliance of CCLOADER_OVERRIDE_MAIN_URL,
+			// if not for the translateinator this environment variable might not have existed
+			game.StartInfo.UseShellExecute = false;
+			game.StartInfo.EnvironmentVariables.Add("CCLOADER_OVERRIDE_MAIN_URL", "/assets/node-webkit.html");
+		}
 
-            Console.Error.WriteLine($"Starting CrossCode process: {game.StartInfo.FileName} {(string.IsNullOrEmpty(args) ? "(without args)" : args)}");
+		if (!string.IsNullOrEmpty(args))
+			game.StartInfo.Arguments = args;
 
-            game.Start();
-            return null;
-        }
+		Console.Error.WriteLine($"Starting CrossCode process: {game.StartInfo.FileName} {(string.IsNullOrEmpty(args) ? "(without args)" : args)}");
 
-    }
+		game.Start();
+		return null;
+	}
+
 }

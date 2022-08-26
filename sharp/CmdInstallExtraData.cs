@@ -1,48 +1,30 @@
-﻿using Mono.Cecil;
-using Mono.Cecil.Cil;
-using MonoMod.Utils;
-using Newtonsoft.Json;
-using Newtonsoft.Json.Linq;
-using System;
+﻿using System;
 using System.Collections;
-using System.Collections.Generic;
-using System.Drawing;
-using System.Globalization;
 using System.IO;
-using System.IO.Compression;
-using System.Linq;
-using System.Net;
-using System.Reflection;
-using System.Runtime.InteropServices;
-using System.Text;
-using System.Threading;
-using System.Threading.Tasks;
 
-namespace CCModManager {
-    public unsafe class CmdInstallExtraData : Cmd<string, string, IEnumerator> {
+namespace CCModManager;
 
-        public override IEnumerator Run(string url, string path) {
-            string pathOrig = path;
-            path = Path.Combine(Program.RootDirectory, path);
-            if (!path.StartsWith(Program.RootDirectory)) {
-                yield return Status("Invalid path.", 1f, "error", false);
-                throw new Exception($"Invalid path: {pathOrig}");
-            }
+public unsafe class CmdInstallExtraData : Cmd<string, string, IEnumerator> {
 
-            if (File.Exists(path)) {
-                yield return Status($"Deleting existing {path}", false, "", false);
-                File.Delete(path);
+	public override IEnumerator Run(string url, string path) {
+		var resPath = Path.Combine(Program.RootDirectory!, path);
+		if (!resPath.StartsWith(Program.RootDirectory!)) {
+			yield return Status("Invalid path.", 1f, "error", false);
+			throw new Exception($"Invalid path: {path}");
+		}
 
-            }
+		if (File.Exists(resPath)) {
+			yield return Status($"Deleting existing {resPath}", false, "", false);
+			File.Delete(resPath);
+		}
 
-            yield return Status($"Downloading {url} to {path}", false, "download", false);
-            string tmp = path + ".part";
-            if (File.Exists(tmp))
-                File.Delete(tmp);
-            using (FileStream stream = File.Open(tmp, FileMode.Create, FileAccess.ReadWrite, FileShare.None))
-                yield return Download(url, 0, stream);
-            File.Move(tmp, path);
-        }
+		yield return Status($"Downloading {url} to {resPath}", false, "download", false);
+		var tmp = resPath + ".part";
+		if (File.Exists(tmp))
+			File.Delete(tmp);
+		using var stream = File.Open(tmp, FileMode.Create, FileAccess.ReadWrite, FileShare.None);
+		yield return Download(url, 0, stream);
+		File.Move(tmp, resPath);
+	}
 
-    }
 }

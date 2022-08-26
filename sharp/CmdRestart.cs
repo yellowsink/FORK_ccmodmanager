@@ -1,44 +1,29 @@
-﻿using Mono.Cecil;
-using Mono.Cecil.Cil;
-using MonoMod.Utils;
-using System;
-using System.Collections;
-using System.Collections.Generic;
+﻿using System;
 using System.Diagnostics;
-using System.Drawing;
-using System.Globalization;
 using System.IO;
-using System.IO.Compression;
-using System.Linq;
-using System.Net;
-using System.Reflection;
-using System.Runtime.InteropServices;
-using System.Text;
-using System.Threading;
-using System.Threading.Tasks;
 
-namespace CCModManager {
-    public unsafe class CmdRestart : Cmd<string, string> {
+namespace CCModManager;
 
-        public override string Run(string exe) {
-            Environment.SetEnvironmentVariable("LOCAL_LUA_DEBUGGER_VSCODE", "0");
-            Environment.SetEnvironmentVariable("OLYMPUS_RESTARTER_PID", Process.GetCurrentProcess().Id.ToString());
+public unsafe class CmdRestart : Cmd<string, string?> {
 
-            Process process = new Process();
+	public override string? Run(string exe) {
+		Environment.SetEnvironmentVariable("LOCAL_LUA_DEBUGGER_VSCODE", "0");
+		Environment.SetEnvironmentVariable("OLYMPUS_RESTARTER_PID",     Process.GetCurrentProcess().Id.ToString());
 
-            if (exe.EndsWith(".love")) {
-                string sh = exe.Substring(0, exe.Length - 4) + "sh";
-                if (File.Exists(sh))
-                    exe = sh;
-            }
+		var process = new Process();
 
-            process.StartInfo.FileName = exe;
-            Environment.CurrentDirectory = process.StartInfo.WorkingDirectory = Path.GetDirectoryName(exe);
+		if (exe.EndsWith(".love")) {
+			var sh = exe.Substring(0, exe.Length - 4) + "sh";
+			if (File.Exists(sh))
+				exe = sh;
+		}
 
-            Console.Error.WriteLine($"Starting Olympus process: {exe}");
-            process.Start();
-            return null;
-        }
+		process.StartInfo.FileName   = exe;
+		Environment.CurrentDirectory = process.StartInfo.WorkingDirectory = Path.GetDirectoryName(exe)!;
 
-    }
+		Console.Error.WriteLine($"Starting Olympus process: {exe}");
+		process.Start();
+		return null;
+	}
+
 }

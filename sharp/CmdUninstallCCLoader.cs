@@ -1,65 +1,52 @@
-﻿using Mono.Cecil;
-using Mono.Cecil.Cil;
-using MonoMod.Utils;
-using System;
+﻿using System;
 using System.Collections;
-using System.Collections.Generic;
-using System.Drawing;
-using System.Globalization;
 using System.IO;
-using System.IO.Compression;
-using System.Linq;
-using System.Net;
-using System.Reflection;
-using System.Runtime.InteropServices;
-using System.Text;
-using System.Threading;
-using System.Threading.Tasks;
 
-namespace CCModManager {
-    public unsafe class CmdUninstallCCLoader : Cmd<string, string, IEnumerator> {
+namespace CCModManager;
 
-        public override IEnumerator Run(string root, string artifactBase) {
-            yield return Status("Uninstalling CCLoader", false, "backup", false);
+public unsafe class CmdUninstallCCLoader : Cmd<string, string, IEnumerator> {
 
-            string origdir = Path.Combine(root, "orig");
-            if (!Directory.Exists(origdir)) {
-                yield return Status("Backup (orig) folder not found", 1f, "error", false);
-                throw new Exception($"Backup folder not found: {origdir}");
-            }
+	public override IEnumerator Run(string root, string artifactBase) {
+		yield return Status("Uninstalling CCLoader", false, "backup", false);
 
-            int i = 0;
-            string[] origs = Directory.GetFiles(origdir);
+		var origDir = Path.Combine(root, "orig");
+		if (!Directory.Exists(origDir)) {
+			yield return Status("Backup (orig) folder not found", 1f, "error", false);
+			throw new Exception($"Backup folder not found: {origDir}");
+		}
 
-            yield return Status($"Reverting {origs.Length} files", 0f, "backup", false);
+		var origs = Directory.GetFiles(origDir);
 
-            foreach (string orig in origs) {
-                string name = Path.GetFileName(orig);
-                yield return Status($"Reverting #{i} / {origs.Length}: {name}", i / (float) origs.Length, "backup", true);
-                i++;
+		yield return Status($"Reverting {origs.Length} files", 0f, "backup", false);
 
-                string to = Path.Combine(root, name);
-                string toParent = Path.GetDirectoryName(to);
-                Console.Error.WriteLine($"{orig} -> {to}");
+		for (var i = 0; i < origs.Length; i++)
+		{
+			var orig = origs[i];
+			
+			var name = Path.GetFileName(orig);
+			yield return Status($"Reverting #{i} / {origs.Length}: {name}", i / (float) origs.Length, "backup", true);
 
-                if (!Directory.Exists(toParent))
-                    Directory.CreateDirectory(toParent);
+			var to       = Path.Combine(root, name);
+			var toParent = Path.GetDirectoryName(to);
+			Console.Error.WriteLine($"{orig} -> {to}");
 
-                if (File.Exists(to))
-                    File.Delete(to);
+			if (!Directory.Exists(toParent))
+				Directory.CreateDirectory(toParent!);
 
-                File.Copy(orig, to);
-            }
+			if (File.Exists(to))
+				File.Delete(to);
 
-            yield return Status($"Reverted {origs.Length} files", 1f, "done", true);
+			File.Copy(orig, to);
+		}
 
-            if (Directory.Exists(Path.Combine(root, "ccloader")))
-            {
-                yield return Status("Deleting CCLoader", 0f, "monomod", false);
-                Directory.Delete(Path.Combine(root, "ccloader"), true);
-                yield return Status("Deleted CCLoader", 1f, "monomod", true);
-            }
-        }
+		yield return Status($"Reverted {origs.Length} files", 1f, "done", true);
 
-    }
+		if (Directory.Exists(Path.Combine(root, "ccloader")))
+		{
+			yield return Status("Deleting CCLoader", 0f, "monomod", false);
+			Directory.Delete(Path.Combine(root, "ccloader"), true);
+			yield return Status("Deleted CCLoader", 1f, "monomod", true);
+		}
+	}
+
 }
