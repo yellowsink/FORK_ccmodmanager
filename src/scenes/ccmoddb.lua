@@ -1,6 +1,8 @@
 local ui, uiu, uie = require("ui").quick()
+local alert = require("alert")
 local utils = require("utils")
 local threader = require("threader")
+local modinstaller = require("modinstaller")
 
 local scene = {
 	name = "CCModDB",
@@ -260,7 +262,13 @@ function scene.loadPage(page)
 		end
 
 		for _, value in pairs(entries) do
+			if value.metadata.name == 'ccloader' or
+				value.metadata.name == 'Simplify' or
+				value.metadata.name == 'CCLoader display version' then
+				goto next
+			end
 			lists.next:addChild(scene.item(value))
+			::next::
 		end
 
 		loading:removeSelf()
@@ -299,7 +307,6 @@ end
 -- TODO: Implement filtering the table based on `query`
 -- possible because the `index` of the table is also the `metadata.name`
 function scene.downloadSearchEntries(query)
-	print("searched for " .. query)
 	local url = "https://github.com/CCDirectLink/CCModDB/raw/master/npDatabase.json"
 	local interData = scene.cache[url]
 	local msg
@@ -319,7 +326,181 @@ end
 
 -- TODO: Implement UI
 function scene.item(mod)
-	local item = uie.label(mod.metadata.name, ui.fontBig)
+	local name = mod.metadata.name
+	local description = mod.metadata.description
+	local version = mod.metadata.version
+	local website = mod.metadata.homepage
+
+	local item = uie.group({
+		uie.group({}):with({
+			clip = false,
+			cacheable = false
+		}):with(uiu.fill):as("bgholder"),
+
+		uie.panel({}):hook({
+			layoutLateLazy = function(orig, self)
+				-- Always reflow this child whenever its parent gets reflowed.
+				self:layoutLate()
+				self:repaint()
+			end,
+
+			layoutLate = function(orig, self)
+				orig(self)
+				local style = self.style
+				style.bg = nil
+				local boxBG = style.bg
+				-- FIXME: blur is very taxing!
+				style.bg = { boxBG[1], boxBG[2], boxBG[3], 0.95 }
+			end
+		}):with({
+			style = {
+				padding = 0,
+				radius = 0,
+				patch = false
+			},
+			clip = false,
+			cacheable = false
+		}):with(uiu.fill):as("bgdarken"),
+
+		uie.group({
+			uie.column({
+				uie.column({
+					uie.column({
+						uie.label({ { 1, 1, 1, 1 }, name, { 1, 1, 1, 0.5 }, "\n" .. version }):as("title"),
+
+						description and #description ~= 0 and uie.label(description):with({ wrap = true }):as("description")
+					}):with({
+						clip = false,
+						cacheable = false
+					}):with(uiu.fillWidth),
+
+					uie.row({
+						website and uie.button(
+							uie.icon("browser"):with({ scale = 24 / 256 }),
+							function()
+								utils.openURL(website)
+							end
+						),
+
+						uie.buttonGreen(
+							uie.icon("download"):with({ scale = 24 / 256 }),
+							function()
+								local btns = {}
+
+								for _, install in ipairs(mod.installation) do
+									btns[#btns + 1] = install
+								end
+
+								for i = 1, #btns do
+									local install = btns[i]
+									local iName = utils.split(install.url, "/", true)
+									btns[i] = uie[i == 1 and "buttonGreen" or "button"](
+										{ { 1, 1, 1, 1 }, iName[#iName] },
+										function()
+											print("Want to install " .. install.url)
+											self:getParent("container"):close("OK")
+										end
+									)
+								end
+
+								if #btns == 0 then
+									return
+								end
+
+								alert({
+									title = name,
+									body = uie.scrollbox(uie.column(btns)),
+									init = function(container)
+										btns[#btns + 1] = uie.button("Close", function()
+											container:close("Close")
+										end)
+										container:findChild("buttons"):removeSelf()
+
+										local body = container:findChild("body")
+
+										if #btns < 6 then
+											body:with({
+												calcSize = uie.group.calcSize
+											})
+											container:hook({
+												awake = function(orig, self)
+													orig(self)
+													self:layoutLazy()
+													self:layoutLateLazy()
+													if self:findChild("title").width > body.width then
+														body:with(uiu.fillWidth)
+														local el = body.children[1]
+														el:with(uiu.fillWidth)
+														local children = el.children
+														for i = 1, #children do
+															children[i]:with(uiu.fillWidth)
+														end
+													else
+														local el = body.children[i]
+														local children = el.children
+														local widest = 0
+														for i = 1, #children do
+															local width = children[i].width
+															if width > widest then
+																widest = width
+															end
+														end
+														for i = 1, #children do
+															if children[i].width < widest then
+																children[i]:with(uiu.fillWidth):reflow()
+															end
+														end
+													end
+													self:reflowDown()
+													self:reflow()
+												end
+											})
+										else
+											body:with(uiu.fillWidth):with(uiu.fillHeight(true))
+											local el = body.children[1]
+											el:with(uiu.fillWidth)
+											local children = el.children
+											for i = 1, #children do
+												children[i]:with(uiu.fillWidth)
+												children[i].label.wrap = true
+											end
+											container:findChild("box"):with({
+												width = 800
+											}):with(uiu.fillHeight(64))
+										end
+									end
+								})
+							end
+						):with({
+							clip = false,
+							cacheable = false
+						})
+					}):with({
+						clip = false,
+						cacheable = false
+					}):with(uiu.rightbound)
+				}):with({
+					clip = false,
+					cacheable = false
+				}):with(uiu.fillWidth)
+			}):with({
+				clip = false,
+				cacheable = false
+			}):with(uiu.fillWidth):as("content")
+		}):with({
+			style = {
+				padding = 16
+			},
+			clip = false,
+			cacheable = false
+		}):with(uiu.fillWidth)
+	}):with({
+		cacheForce = true,
+		cachePadding = 0,
+		clip = false,
+		cacheable = false
+	}):with(uiu.fillWidth)
+
 	return item
 end
 
