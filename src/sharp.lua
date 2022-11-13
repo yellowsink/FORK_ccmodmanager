@@ -61,8 +61,13 @@ local function sharpthread()
             ]]
             pid = tostring(ffi.C.getpid())
         end
-
-        local exe = fs.joinpath(cwd, "CCModManager.Sharp")
+            
+        local exe = nil
+        if ffi.os == "Windows" then
+            exe = "CCModManager.Sharp.exe"
+        else
+            exe = fs.joinpath(cwd, "CCModManager.Sharp")
+        end
 
         local logpath = os.getenv("OLYMPUS_SHARP_LOGPATH") or nil
         if logpath and #logpath == 0 then
