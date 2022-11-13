@@ -62,23 +62,7 @@ local function sharpthread()
             pid = tostring(ffi.C.getpid())
         end
 
-        local exename = nil
-        if ffi.os == "Windows" then
-            exename = "CCModManager.Sharp.exe"
-
-        elseif ffi.os == "Linux" then
-            if ffi.arch == "x86" then
-                -- Note: MonoKickstart no longer ships with x86 prebuilts.
-                exename = "CCModManager.Sharp.bin.x86"
-            elseif ffi.arch == "x64" then
-                exename = "CCModManager.Sharp.bin.x86_64"
-            end
-
-        elseif ffi.os == "OSX" then
-            exename = "CCModManager.Sharp.bin.osx"
-        end
-
-        local exe = fs.joinpath(cwd, exename)
+        local exe = fs.joinpath(cwd, "CCModManager.Sharp")
 
         local logpath = os.getenv("OLYMPUS_SHARP_LOGPATH") or nil
         if logpath and #logpath == 0 then
