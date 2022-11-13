@@ -237,12 +237,12 @@ jobs:
         if: ${{ success() && (matrix.agentArch == 'linux' || matrix.agentArch == 'macOS') }}
         shell: bash
         run: |
-          mv love/${{ matrix.loveBinaryDirectory }}/sharp/${{ env.sharpName }} love/${{ matrix.loveBinaryDirectory }}/sharp/${{ env.sharpName }}.bin.x86_64
+          mv love/${{ matrix.loveBinaryDirectory }}/sharp/${{ env.sharpName }} love/${{ matrix.loveBinaryDirectory }}/sharp/${{ env.sharpName }}
       - name: "Dist: Fix Windows sharp binary name"
         if: ${{ success() && matrix.agentArch == 'windows' }}
         shell: bash
         run: |
-          mv love/${{ matrix.loveBinaryDirectory }}/sharp/${{ env.sharpName }}.exe love/${{ matrix.loveBinaryDirectory }}/sharp/${{ env.sharpName }}.bin.x86_64
+          mv love/${{ matrix.loveBinaryDirectory }}/sharp/${{ env.sharpName }}.exe love/${{ matrix.loveBinaryDirectory }}/sharp/${{ env.sharpName }}
       # }}}
       # Copy special additional mono dependencies.
       # Those usually come from Ubuntu Mono packages with a version close to the MonoKickstart version.
@@ -299,7 +299,7 @@ jobs:
           cp ccmodmanager.sh love/${{ matrix.loveBinaryDirectory }}/ccmodmanager.sh
           chmod a+rx love/${{ matrix.loveBinaryDirectory }}/ccmodmanager.sh
           chmod a+rx love/${{ matrix.loveBinaryDirectory }}/love
-          chmod a+rx love/${{ matrix.loveBinaryDirectory }}/sharp/${{ env.sharpName }}.bin.x86_64
+          chmod a+rx love/${{ matrix.loveBinaryDirectory }}/sharp/${{ env.sharpName }}
           chmod a+rx love/${{ matrix.loveBinaryDirectory }}/sharp/${{ env.sharpName }}.dll
           codesign --remove-signature love/${{ matrix.loveBinaryDirectory }}/love
           mv love/love.app love/CCModManager.app
@@ -316,7 +316,7 @@ jobs:
           chmod a+rx love/${{ matrix.loveBinaryDirectory }}/ccmodmanager
           chmod a+rx love/${{ matrix.loveBinaryDirectory }}/love
           chmod a+rx love/${{ matrix.loveBinaryDirectory }}/install.sh
-          chmod a+rx love/${{ matrix.loveBinaryDirectory }}/sharp/${{ env.sharpName }}.bin.x86_64
+          chmod a+rx love/${{ matrix.loveBinaryDirectory }}/sharp/${{ env.sharpName }}
           chmod a+rx love/${{ matrix.loveBinaryDirectory }}/sharp/${{ env.sharpName }}.dll
           cp -v src/data/icon.png love/${{ matrix.loveBinaryDirectory }}/ccmodmanager.png
           rm -v love/${{ matrix.loveBinaryDirectory }}/lib/x86_64-linux-gnu/libz.so.1

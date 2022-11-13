@@ -45,9 +45,9 @@ if [[ ! -e "${SCRIPTDIR}/.cache/love.tar.gz" ]]; then
   wget -O "${SCRIPTDIR}/.cache/${LOVETAR}" ${LOVEURL}
 fi
 
-if [[ ! -d "${SCRIPTDIR}/.cache/MonoKickstart" ]]; then
-  git clone "${monokickURL}" "${SCRIPTDIR}/.cache/MonoKickstart"
-fi
+#if [[ ! -d "${SCRIPTDIR}/.cache/MonoKickstart" ]]; then
+#  git clone "${monokickURL}" "${SCRIPTDIR}/.cache/MonoKickstart"
+#fi
 
 if [[ ! -d "${SCRIPTDIR}/.luarocks" ]]; then
   luarocks install --tree=.luarocks https://raw.githubusercontent.com/0x0ade/lua-subprocess/master/subprocess-scm-1.rockspec "${luarocksArgs}" && \
@@ -57,7 +57,8 @@ fi
 
 rm -rf love-raw love
 
-dotnet exec "/usr/share/dotnet/sdk/6.0.108/MSBuild.dll" sharp/"${SHARP_NAME}".sln "/p:Configuration=Release" "/p:Platform=Any CPU"
+#dotnet exec "/usr/share/dotnet/sdk/6.0.108/MSBuild.dll" sharp/"${SHARP_NAME}".sln "/p:Configuration=Release" "/p:Platform=Any CPU"
+dotnet build -c Release "sharp/${SHARP_NAME}.sln"
 
 mkdir -p love-raw && \
   tar -xvf "${SCRIPTDIR}/.cache/${LOVETAR}" -C love-raw && \
@@ -72,19 +73,19 @@ mv ccmodmanager.love ../love
 popd || exit
 
 cp -r .luarocks/lib/lua/**/* love
-cp -r .luarocks/share/lua/**/* love
+cp -r .luarocks/share/lua/**/* love || true
 cp -r lib-linux/* love
 cp -rv sharp/bin/**/!(xunit.*|System.*|Microsoft.*|*.Tests.dll|*.pdb) love/sharp
-mv love/sharp/net452/* love/sharp
-rm -rf love/sharp/net452
+mv love/sharp/net*/* love/sharp
+rm -rf love/sharp/net*
 
-cp "${SCRIPTDIR}/.cache/MonoKickstart/precompiled/kick.bin.x86_64" "${SCRIPTDIR}/.cache/MonoKickstart/precompiled/${SHARP_NAME}.bin.x86_64"
-rm -rf "${SCRIPTDIR}/.cache/MonoKickstart/precompiled/kick.bin.x86_64.debug"
-cp -rv "${SCRIPTDIR}"/.cache/MonoKickstart/precompiled/* love/sharp
+#cp "${SCRIPTDIR}/.cache/MonoKickstart/precompiled/kick.bin.x86_64" "${SCRIPTDIR}/.cache/MonoKickstart/precompiled/${SHARP_NAME}.bin.x86_64"
+#rm -rf "${SCRIPTDIR}/.cache/MonoKickstart/precompiled/kick.bin.x86_64.debug"
+#cp -rv "${SCRIPTDIR}"/.cache/MonoKickstart/precompiled/* love/sharp
 cp -rv lib-mono/* love/sharp
 
 cp ccmodmanager.sh love/ccmodmanager && \
   chmod a+rx love/ccmodmanager && \
   chmod a+rx love/love && \
   chmod a+rx love/install.sh && \
-  chmod a+rx love/sharp/"${SHARP_NAME}".bin*
+  chmod a+rx love/sharp/"${SHARP_NAME}" #.bin*

@@ -14,7 +14,8 @@ rm -rf luarocks love love-raw love.tar.gz ccmodmanager.zip ccmodmanager.love
 
 dotnet restore sharp/"${SHARP_NAME}".csproj --verbosity Detailed
 
-msbuild sharp/"${SHARP_NAME}".sln "/p:Configuration=Release" "/p:Platform=Any CPU"
+#msbuild sharp/"${SHARP_NAME}".sln "/p:Configuration=Release" "/p:Platform=Any CPU"
+dotnet build -c Release sharp/"${SHARP_NAME}.sln"
 
 wget -O ${LOVETAR} ${LOVEURL}
 rm -rf love-raw love
@@ -37,9 +38,9 @@ cp -rv .luarocks/lib/lua/**/* love/"${loveBinaryDirectory}" && \
 cp -r .luarocks/share/lua/**/* love
 cp -rv lib-${agentArch}/* love/"${loveBinaryDirectory}" && \
 cp -rv sharp/bin/**/net6/!(xunit.*|System.*|Microsoft.*|*.Tests.dll|*.pdb) love/"${loveBinaryDirectory}"/sharp
-mv love/"${loveBinaryDirectory}"/sharp/"${SHARP_NAME}" love/"${loveBinaryDirectory}"/sharp/"${SHARP_NAME}".bin.x86_64
-rm -rf love/"${loveBinaryDirectory}"/sharp/net452
-cp -rv sharp/bin/**/net452/* love/"${loveBinaryDirectory}"/sharp
+mv love/"${loveBinaryDirectory}"/sharp/"${SHARP_NAME}" love/"${loveBinaryDirectory}"/sharp/"${SHARP_NAME}"
+rm -rf love/"${loveBinaryDirectory}"/sharp/net*
+cp -rv sharp/bin/**/net*/* love/"${loveBinaryDirectory}"/sharp
 
 cp -rv lib-mono/* love/"${loveBinaryDirectory}"/sharp
 
@@ -49,7 +50,7 @@ cp -v ccmodmanager.sh love/"${loveBinaryDirectory}"/ccmodmanager && \
   chmod a+rx love/"${loveBinaryDirectory}"/ccmodmanager && \
   chmod a+rx love/"${loveBinaryDirectory}"/love && \
   chmod a+rx love/"${loveBinaryDirectory}"/install.sh && \
-  chmod a+rx love/"${loveBinaryDirectory}"/sharp/"${SHARP_NAME}".bin.x86_64 && \
+  chmod a+rx love/"${loveBinaryDirectory}"/sharp/"${SHARP_NAME}" && \
   chmod a+rx love/"${loveBinaryDirectory}"/sharp/"${SHARP_NAME}".dll && \
   cp -v src/data/icon.png love/"${loveBinaryDirectory}"/ccmodmanager.png && \
   rm -v love/"${loveBinaryDirectory}"/lib/x86_64-linux-gnu/libz.so.1 && \
