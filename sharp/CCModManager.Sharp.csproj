@@ -10,6 +10,7 @@
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
     <AssemblyName>CCModManager.Sharp</AssemblyName>
     <Nullable>enable</Nullable>
+    <PublishSingleFile>true</PublishSingleFile>
   </PropertyGroup>
 
   <ItemGroup>

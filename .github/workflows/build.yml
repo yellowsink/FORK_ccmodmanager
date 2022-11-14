@@ -117,10 +117,19 @@ jobs:
         run: |
           dotnet restore sharp/${{ env.sharpName }}.csproj --verbosity Detailed
       # Build using core.
-      - name: 'Build: dotnet: build sharp'
-        if: ${{ success() && matrix.netbuilder == 'core' }}
+      # TODO is there a way to not duplicate these? -- sink
+      - name: 'Build: Windows: dotnet: build sharp'
+        if: ${{ success() && matrix.netbuilder == 'core' && matrix.agentArch == 'windows' }}
         run: |
-          dotnet build sharp/${{ env.sharpName }}.csproj --configuration ${{ env.netBuildConfiguration }} "/p:Configuration=${{ env.netBuildConfiguration }}"
+          dotnet publish --self-contained -c ${{ env.netBuildConfiguration }} -r win-x64 -p:PublishTrimmed=true sharp/${{ env.sharpName }}.csproj
+      - name: 'Build: Linux: dotnet: build sharp'
+        if: ${{ success() && matrix.netbuilder == 'core' && matrix.agentArch == 'linux' }}
+        run: |
+          dotnet publish --self-contained -c ${{ env.netBuildConfiguration }} -r linux-x64 -p:PublishTrimmed=true sharp/${{ env.sharpName }}.csproj
+      - name: 'Build: macOS: dotnet: build sharp'
+        if: ${{ success() && matrix.netbuilder == 'core' && matrix.agentArch == 'macOS' }}
+        run: |
+          dotnet publish --self-contained -c ${{ env.netBuildConfiguration }} -r osx-x64 -p:PublishTrimmed=true sharp/${{ env.sharpName }}.csproj
       # Build using mono.
       - name: 'Build: mono: build sharp'
         if: ${{ success() && matrix.netbuilder == 'mono' }}
@@ -231,7 +240,8 @@ jobs:
         run: |
           shopt -s extglob
           mkdir love/${{ matrix.loveBinaryDirectory }}/sharp || true
-          cp -rv sharp/bin/**/net6/!(xunit.*|System.*|Microsoft.*|*.Tests.dll|*.pdb) love/${{ matrix.loveBinaryDirectory }}/sharp
+          #cp -rv sharp/bin/**/net*/!(xunit.*|System.*|Microsoft.*|*.Tests.dll|*.pdb) love/${{ matrix.loveBinaryDirectory }}/sharp
+          cp -rv sharp/bin/*/net*/*-x64/publish/* love/${{ matrix.loveBinaryDirectory }}/sharp/
       - name: 'Dist: Fix Windows sharp binary name'
         if: ${{ success() && matrix.agentArch == 'windows' }}
         shell: bash
@@ -294,7 +304,7 @@ jobs:
           chmod a+rx love/${{ matrix.loveBinaryDirectory }}/ccmodmanager.sh
           chmod a+rx love/${{ matrix.loveBinaryDirectory }}/love
           chmod a+rx love/${{ matrix.loveBinaryDirectory }}/sharp/${{ env.sharpName }}
-          chmod a+rx love/${{ matrix.loveBinaryDirectory }}/sharp/${{ env.sharpName }}.dll
+          #chmod a+rx love/${{ matrix.loveBinaryDirectory }}/sharp/${{ env.sharpName }}.dll
           codesign --remove-signature love/${{ matrix.loveBinaryDirectory }}/love
           mv love/love.app love/CCModManager.app
           mkdir -p ../a/main
@@ -311,7 +321,7 @@ jobs:
           chmod a+rx love/${{ matrix.loveBinaryDirectory }}/love
           chmod a+rx love/${{ matrix.loveBinaryDirectory }}/install.sh
           chmod a+rx love/${{ matrix.loveBinaryDirectory }}/sharp/${{ env.sharpName }}
-          chmod a+rx love/${{ matrix.loveBinaryDirectory }}/sharp/${{ env.sharpName }}.dll
+          #chmod a+rx love/${{ matrix.loveBinaryDirectory }}/sharp/${{ env.sharpName }}.dll
           cp -v src/data/icon.png love/${{ matrix.loveBinaryDirectory }}/ccmodmanager.png
           rm -v love/${{ matrix.loveBinaryDirectory }}/lib/x86_64-linux-gnu/libz.so.1
           rm -v love/${{ matrix.loveBinaryDirectory }}/usr/lib/x86_64-linux-gnu/libfreetype.so.6
